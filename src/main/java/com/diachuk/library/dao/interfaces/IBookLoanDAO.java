@@ -1,0 +1,7 @@
+package com.diachuk.library.dao.interfaces;
+
+/**
+ * Created by VA-N_ on 18.12.2016.
+ */
+public interface IBookLoanDAO {
+}

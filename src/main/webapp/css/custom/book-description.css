@@ -1,0 +1,20 @@
+.book-description-section {
+  border-radius: 5px;
+  margin: 100px 5px 5px 5px;
+}
+
+.description-text-section {
+  margin: 5px;
+  text-align: justify;
+  text-indent: 30px;
+}
+
+.reserve-section .btn,
+.reserve-section select {
+  width: 100%;
+  margin: 5px;
+}
+
+body {
+  background-color: #E2DCC5
+}

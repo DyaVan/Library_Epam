@@ -1,0 +1,89 @@
+@font-face {
+    font-family: Roboto;
+    src: url("../../fonts/Roboto/Roboto-Regular.ttf");
+}
+
+@font-face {
+    font-family: Roboto Bold;
+    src: url("../../fonts/Roboto/Roboto-Bold.ttf");
+}
+
+.navbar-custom {
+    background-color: #75625E;
+    color: #ffffff;
+    border-radius: 0;
+}
+
+.navbar-custom .navbar-nav>li>a {
+    color: #fff;
+}
+
+.navbar-custom .navbar-toggle {
+    background-color: #F0DEDC;
+}
+
+.navbar-custom .icon-bar {
+    background-color: #75625E;
+}
+
+
+
+.header-link {
+    display: block;
+    line-height: 38px;
+    color: white;
+    font-family: "Roboto Bold";
+    margin: 5px 2px;
+    text-align: center;
+    border-radius: 3px;
+}
+
+.header-link:hover {
+    text-decoration: none;
+    background-color: white;
+    background-color: rgba(255, 255, 255, 0.6);
+    color: #75625E;
+}
+
+.header-link:focus {
+    color: white;
+    text-decoration: none;
+}
+
+
+.container {
+    margin-top: 60px;
+}
+
+/*---MESSAGE---*/
+
+.error-message,
+.success-message {
+    position: fixed;
+    right: 50px;
+    top:50px;
+    border-radius: 7px;
+    width: 250px;
+    padding: 10px;
+    z-index: 100;
+}
+
+.error-message h4,
+.success-message h4 {
+    border-bottom: 1px solid white;
+}
+
+.error-message {
+    background-color: rgba(255,74,95, 0.3);
+    display: none;
+}
+
+.success-message {
+    background-color: rgba(9,170,9, 0.3);
+    display: none;
+}
+
+
+* {
+    font-family: "Roboto";
+}

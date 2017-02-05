@@ -1,0 +1,549 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="MySQL - library@localhost">
+  <database-model serializer="dbm" rdbms="MYSQL" format-version="2.6">
+    <schema id="1" name="library">
+      <visible>1</visible>
+    </schema>
+    <schema id="2" name="beerdata"/>
+    <schema id="3" name="epamsocialdb"/>
+    <schema id="4" name="information_schema"/>
+    <schema id="5" name="mysql"/>
+    <schema id="6" name="performance_schema"/>
+    <schema id="7" name="sakila"/>
+    <schema id="8" name="sys"/>
+    <schema id="9" name="world"/>
+    <table id="10" parent="1" name="bannedbook"/>
+    <table id="11" parent="1" name="book"/>
+    <table id="12" parent="1" name="bookloan"/>
+    <table id="13" parent="1" name="futurebook"/>
+    <table id="14" parent="1" name="homereservation"/>
+    <table id="15" parent="1" name="newspost"/>
+    <table id="16" parent="1" name="question"/>
+    <table id="17" parent="1" name="request"/>
+    <table id="18" parent="1" name="role"/>
+    <table id="19" parent="1" name="rroomreservation">
+      <comment>Reading room reservation</comment>
+    </table>
+    <table id="20" parent="1" name="user"/>
+    <table id="21" parent="1" name="vote"/>
+    <table id="22" parent="1" name="config"/>
+    <column id="23" parent="10" name="bookId">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <key id="24" parent="10" name="PRIMARY">
+      <columns>bookId</columns>
+      <primary>1</primary>
+    </key>
+    <foreign-key id="25" parent="10" name="FK_bannedbook_book">
+      <columns>bookId</columns>
+      <ref-key>~.book.PRIMARY</ref-key>
+      <cascade-update-rule>no_action</cascade-update-rule>
+      <cascade-delete-rule>no_action</cascade-delete-rule>
+    </foreign-key>
+    <column id="26" parent="11" name="id">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+      <sequence-identity>1</sequence-identity>
+    </column>
+    <column id="27" parent="11" name="name">
+      <mandatory>1</mandatory>
+      <data-type>varchar(45)|0</data-type>
+    </column>
+    <column id="28" parent="11" name="author">
+      <mandatory>1</mandatory>
+      <data-type>varchar(45)|0</data-type>
+    </column>
+    <column id="29" parent="11" name="year">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="30" parent="11" name="genre">
+      <mandatory>1</mandatory>
+      <data-type>varchar(20)|0</data-type>
+    </column>
+    <column id="31" parent="11" name="description">
+      <data-type>varchar(2000)|0</data-type>
+    </column>
+    <column id="32" parent="11" name="pages">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="33" parent="11" name="readersRate">
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="34" parent="11" name="numberOfVotes">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="35" parent="11" name="amountForHome">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="36" parent="11" name="availableForHome">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="37" parent="11" name="amountInRRoom">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="38" parent="11" name="availableInRRoom">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="39" parent="11" name="image">
+      <mandatory>1</mandatory>
+      <data-type>varchar(100)|0</data-type>
+    </column>
+    <index id="40" parent="11" name="name_author_idx">
+      <columns>name
+author</columns>
+      <desc-columns></desc-columns>
+    </index>
+    <key id="41" parent="11" name="PRIMARY">
+      <columns>id</columns>
+      <primary>1</primary>
+    </key>
+    <column id="42" parent="12" name="id">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+      <sequence-identity>1</sequence-identity>
+    </column>
+    <column id="43" parent="12" name="userId">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="44" parent="12" name="bookId">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="45" parent="12" name="type">
+      <mandatory>1</mandatory>
+      <data-type>varchar(20)|0</data-type>
+    </column>
+    <column id="46" parent="12" name="tookDate">
+      <mandatory>1</mandatory>
+      <data-type>date|0</data-type>
+    </column>
+    <column id="47" parent="12" name="dueDate">
+      <mandatory>1</mandatory>
+      <data-type>date|0</data-type>
+    </column>
+    <column id="48" parent="12" name="returnDate">
+      <data-type>date|0</data-type>
+    </column>
+    <index id="49" parent="12" name="FK_receipt_book_idx">
+      <columns>bookId</columns>
+      <desc-columns></desc-columns>
+    </index>
+    <index id="50" parent="12" name="FK_receipt_user_idx">
+      <columns>userId</columns>
+      <desc-columns></desc-columns>
+    </index>
+    <index id="51" parent="12" name="userId_bookId_idx">
+      <columns>userId
+bookId</columns>
+      <desc-columns></desc-columns>
+    </index>
+    <key id="52" parent="12" name="PRIMARY">
+      <columns>id</columns>
+      <primary>1</primary>
+    </key>
+    <foreign-key id="53" parent="12" name="FK_receipt_user">
+      <columns>userId</columns>
+      <ref-key>~.user.PRIMARY</ref-key>
+      <cascade-update-rule>no_action</cascade-update-rule>
+      <cascade-delete-rule>no_action</cascade-delete-rule>
+    </foreign-key>
+    <foreign-key id="54" parent="12" name="FK_receipt_book">
+      <columns>bookId</columns>
+      <ref-key>~.book.PRIMARY</ref-key>
+      <cascade-update-rule>no_action</cascade-update-rule>
+      <cascade-delete-rule>no_action</cascade-delete-rule>
+    </foreign-key>
+    <column id="55" parent="13" name="id">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+      <sequence-identity>1</sequence-identity>
+    </column>
+    <column id="56" parent="13" name="userId">
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="57" parent="13" name="bookId">
+      <data-type>int(11)|0</data-type>
+    </column>
+    <index id="58" parent="13" name="FK_futureBook_book_idx">
+      <columns>bookId</columns>
+      <desc-columns></desc-columns>
+    </index>
+    <index id="59" parent="13" name="FK_futureBook_user_idx">
+      <columns>userId</columns>
+      <desc-columns></desc-columns>
+    </index>
+    <key id="60" parent="13" name="PRIMARY">
+      <columns>id</columns>
+      <primary>1</primary>
+    </key>
+    <foreign-key id="61" parent="13" name="FK_futurebook_user">
+      <columns>userId</columns>
+      <ref-key>~.user.PRIMARY</ref-key>
+      <cascade-update-rule>no_action</cascade-update-rule>
+      <cascade-delete-rule>no_action</cascade-delete-rule>
+    </foreign-key>
+    <foreign-key id="62" parent="13" name="FK_futurebook_book">
+      <columns>bookId</columns>
+      <ref-key>~.book.PRIMARY</ref-key>
+      <cascade-update-rule>no_action</cascade-update-rule>
+      <cascade-delete-rule>no_action</cascade-delete-rule>
+    </foreign-key>
+    <column id="63" parent="14" name="id">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+      <sequence-identity>1</sequence-identity>
+    </column>
+    <column id="64" parent="14" name="bookId">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="65" parent="14" name="userId">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="66" parent="14" name="dueDate">
+      <mandatory>1</mandatory>
+      <data-type>date|0</data-type>
+    </column>
+    <index id="67" parent="14" name="FK_homereservation_book_idx">
+      <columns>bookId</columns>
+      <desc-columns></desc-columns>
+    </index>
+    <index id="68" parent="14" name="FK_homereservation_user_idx">
+      <columns>userId</columns>
+      <desc-columns></desc-columns>
+    </index>
+    <key id="69" parent="14" name="PRIMARY">
+      <columns>id</columns>
+      <primary>1</primary>
+    </key>
+    <foreign-key id="70" parent="14" name="FK_reservation_book">
+      <columns>bookId</columns>
+      <ref-key>~.book.PRIMARY</ref-key>
+      <cascade-update-rule>no_action</cascade-update-rule>
+      <cascade-delete-rule>no_action</cascade-delete-rule>
+    </foreign-key>
+    <foreign-key id="71" parent="14" name="FK_reservation_user">
+      <columns>userId</columns>
+      <ref-key>~.user.PRIMARY</ref-key>
+      <cascade-update-rule>no_action</cascade-update-rule>
+      <cascade-delete-rule>no_action</cascade-delete-rule>
+    </foreign-key>
+    <column id="72" parent="15" name="id">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+      <sequence-identity>1</sequence-identity>
+    </column>
+    <column id="73" parent="15" name="subject">
+      <mandatory>1</mandatory>
+      <data-type>varchar(255)|0</data-type>
+    </column>
+    <column id="74" parent="15" name="date">
+      <mandatory>1</mandatory>
+      <data-type>datetime|0</data-type>
+    </column>
+    <column id="75" parent="15" name="text">
+      <mandatory>1</mandatory>
+      <data-type>text|0</data-type>
+    </column>
+    <column id="76" parent="15" name="userId">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="77" parent="15" name="image">
+      <data-type>varchar(100)|0</data-type>
+    </column>
+    <index id="78" parent="15" name="FK_newspost_user_idx">
+      <columns>userId</columns>
+      <desc-columns></desc-columns>
+    </index>
+    <key id="79" parent="15" name="PRIMARY">
+      <columns>id</columns>
+      <primary>1</primary>
+    </key>
+    <foreign-key id="80" parent="15" name="FK_newspost_user">
+      <columns>userId</columns>
+      <ref-key>~.user.PRIMARY</ref-key>
+      <cascade-update-rule>no_action</cascade-update-rule>
+      <cascade-delete-rule>no_action</cascade-delete-rule>
+    </foreign-key>
+    <column id="81" parent="16" name="id">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+      <sequence-identity>1</sequence-identity>
+    </column>
+    <column id="82" parent="16" name="userId">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="83" parent="16" name="subject">
+      <mandatory>1</mandatory>
+      <data-type>varchar(150)|0</data-type>
+    </column>
+    <column id="84" parent="16" name="text">
+      <mandatory>1</mandatory>
+      <data-type>text|0</data-type>
+    </column>
+    <column id="85" parent="16" name="date">
+      <mandatory>1</mandatory>
+      <data-type>datetime|0</data-type>
+    </column>
+    <column id="86" parent="16" name="isAnswered">
+      <mandatory>1</mandatory>
+      <data-type>bit(1)|0</data-type>
+    </column>
+    <column id="87" parent="16" name="answear">
+      <data-type>text|0</data-type>
+    </column>
+    <index id="88" parent="16" name="FK_question_user_idx">
+      <columns>userId</columns>
+      <desc-columns></desc-columns>
+    </index>
+    <key id="89" parent="16" name="PRIMARY">
+      <columns>id</columns>
+      <primary>1</primary>
+    </key>
+    <foreign-key id="90" parent="16" name="FK_question_user">
+      <columns>userId</columns>
+      <ref-key>~.user.PRIMARY</ref-key>
+      <cascade-update-rule>no_action</cascade-update-rule>
+      <cascade-delete-rule>no_action</cascade-delete-rule>
+    </foreign-key>
+    <column id="91" parent="17" name="id">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+      <sequence-identity>1</sequence-identity>
+    </column>
+    <column id="92" parent="17" name="bookId">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="93" parent="17" name="userId">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="94" parent="17" name="requestDate">
+      <mandatory>1</mandatory>
+      <data-type>datetime|0</data-type>
+    </column>
+    <index id="95" parent="17" name="bookId_userId_idx">
+      <columns>bookId
+userId</columns>
+      <desc-columns></desc-columns>
+      <unique>1</unique>
+    </index>
+    <index id="96" parent="17" name="FK_reservation_book_idx">
+      <columns>bookId</columns>
+      <desc-columns></desc-columns>
+    </index>
+    <index id="97" parent="17" name="FK_reservation_user_idx">
+      <columns>userId</columns>
+      <desc-columns></desc-columns>
+    </index>
+    <key id="98" parent="17" name="PRIMARY">
+      <columns>id</columns>
+      <primary>1</primary>
+    </key>
+    <key id="99" parent="17" name="bookId_userId_idx">
+      <columns>bookId
+userId</columns>
+      <underlying-index>bookId_userId_idx</underlying-index>
+    </key>
+    <foreign-key id="100" parent="17" name="FK_request_book">
+      <columns>bookId</columns>
+      <ref-key>~.book.PRIMARY</ref-key>
+      <cascade-update-rule>no_action</cascade-update-rule>
+      <cascade-delete-rule>no_action</cascade-delete-rule>
+    </foreign-key>
+    <foreign-key id="101" parent="17" name="FK_request_user">
+      <columns>userId</columns>
+      <ref-key>~.user.PRIMARY</ref-key>
+      <cascade-update-rule>no_action</cascade-update-rule>
+      <cascade-delete-rule>no_action</cascade-delete-rule>
+    </foreign-key>
+    <column id="102" parent="18" name="id">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+      <sequence-identity>1</sequence-identity>
+    </column>
+    <column id="103" parent="18" name="name">
+      <mandatory>1</mandatory>
+      <data-type>varchar(45)|0</data-type>
+    </column>
+    <column id="104" parent="18" name="accessLevel">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <key id="105" parent="18" name="PRIMARY">
+      <columns>id</columns>
+      <primary>1</primary>
+    </key>
+    <column id="106" parent="19" name="id">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+      <sequence-identity>1</sequence-identity>
+    </column>
+    <column id="107" parent="19" name="bookId">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="108" parent="19" name="userId">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="109" parent="19" name="reservationTime">
+      <mandatory>1</mandatory>
+      <data-type>date|0</data-type>
+    </column>
+    <index id="110" parent="19" name="FK_rroomreservation_book_idx">
+      <columns>bookId</columns>
+      <desc-columns></desc-columns>
+    </index>
+    <index id="111" parent="19" name="FK_rroomreservation_user_idx">
+      <columns>userId</columns>
+      <desc-columns></desc-columns>
+    </index>
+    <key id="112" parent="19" name="PRIMARY">
+      <columns>id</columns>
+      <primary>1</primary>
+    </key>
+    <foreign-key id="113" parent="19" name="FK_rroomreservation_book">
+      <columns>bookId</columns>
+      <ref-key>~.book.PRIMARY</ref-key>
+      <cascade-update-rule>no_action</cascade-update-rule>
+      <cascade-delete-rule>no_action</cascade-delete-rule>
+    </foreign-key>
+    <foreign-key id="114" parent="19" name="FK_rroomreservation_user">
+      <columns>userId</columns>
+      <ref-key>~.user.PRIMARY</ref-key>
+      <cascade-update-rule>no_action</cascade-update-rule>
+      <cascade-delete-rule>no_action</cascade-delete-rule>
+    </foreign-key>
+    <column id="115" parent="20" name="id">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+      <sequence-identity>1</sequence-identity>
+    </column>
+    <column id="116" parent="20" name="name">
+      <mandatory>1</mandatory>
+      <data-type>varchar(45)|0</data-type>
+    </column>
+    <column id="117" parent="20" name="surname">
+      <mandatory>1</mandatory>
+      <data-type>varchar(45)|0</data-type>
+    </column>
+    <column id="118" parent="20" name="roleId">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="119" parent="20" name="email">
+      <mandatory>1</mandatory>
+      <data-type>varchar(45)|0</data-type>
+    </column>
+    <column id="120" parent="20" name="password">
+      <mandatory>1</mandatory>
+      <data-type>varchar(45)|0</data-type>
+    </column>
+    <column id="121" parent="20" name="registrationDate">
+      <mandatory>1</mandatory>
+      <data-type>date|0</data-type>
+    </column>
+    <index id="122" parent="20" name="email_UNIQUE">
+      <columns>email</columns>
+      <desc-columns></desc-columns>
+      <unique>1</unique>
+    </index>
+    <index id="123" parent="20" name="FK_user_role_idx">
+      <columns>roleId</columns>
+      <desc-columns></desc-columns>
+    </index>
+    <key id="124" parent="20" name="PRIMARY">
+      <columns>id</columns>
+      <primary>1</primary>
+    </key>
+    <key id="125" parent="20" name="email_UNIQUE">
+      <columns>email</columns>
+      <underlying-index>email_UNIQUE</underlying-index>
+    </key>
+    <foreign-key id="126" parent="20" name="FK_user_role">
+      <columns>roleId</columns>
+      <ref-key>~.role.PRIMARY</ref-key>
+      <cascade-update-rule>no_action</cascade-update-rule>
+      <cascade-delete-rule>no_action</cascade-delete-rule>
+    </foreign-key>
+    <column id="127" parent="21" name="id">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+      <sequence-identity>1</sequence-identity>
+    </column>
+    <column id="128" parent="21" name="mark">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="129" parent="21" name="userId">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <column id="130" parent="21" name="bookId">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <index id="131" parent="21" name="FK_vote_book_idx">
+      <columns>bookId</columns>
+      <desc-columns></desc-columns>
+    </index>
+    <index id="132" parent="21" name="userId_bookId_idx">
+      <columns>userId
+bookId</columns>
+      <desc-columns></desc-columns>
+      <unique>1</unique>
+    </index>
+    <key id="133" parent="21" name="PRIMARY">
+      <columns>id</columns>
+      <primary>1</primary>
+    </key>
+    <key id="134" parent="21" name="userId_bookId_idx">
+      <columns>userId
+bookId</columns>
+      <underlying-index>userId_bookId_idx</underlying-index>
+    </key>
+    <foreign-key id="135" parent="21" name="FK_vote_user">
+      <columns>userId</columns>
+      <ref-key>~.user.PRIMARY</ref-key>
+      <cascade-update-rule>no_action</cascade-update-rule>
+      <cascade-delete-rule>no_action</cascade-delete-rule>
+    </foreign-key>
+    <foreign-key id="136" parent="21" name="FK_vote_book">
+      <columns>bookId</columns>
+      <ref-key>~.book.PRIMARY</ref-key>
+      <cascade-update-rule>no_action</cascade-update-rule>
+      <cascade-delete-rule>no_action</cascade-delete-rule>
+    </foreign-key>
+    <column id="137" parent="22" name="id">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+      <sequence-identity>1</sequence-identity>
+    </column>
+    <column id="138" parent="22" name="parameterName">
+      <mandatory>1</mandatory>
+      <data-type>varchar(45)|0</data-type>
+    </column>
+    <column id="139" parent="22" name="value">
+      <mandatory>1</mandatory>
+      <data-type>int(11)|0</data-type>
+    </column>
+    <key id="140" parent="22" name="PRIMARY">
+      <columns>id</columns>
+      <primary>1</primary>
+    </key>
+  </database-model>
+</dataSource>
