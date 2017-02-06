@@ -3,7 +3,12 @@
     var reservationSearch = function () {
 
         var reservationId = $("#reservationId-input").val();
-        var url = "Library?command=findReservationVSUser&reservationId=" + reservationId;
+
+        var reservationType = $("#reservation-type").val();
+
+        var url = "Library?command=findReservationVSUser&reservationId=" + reservationId
+            + "&reservationType=" + reservationType;
+
         $.ajax({
             url: url,
             type: "get",

@@ -67,12 +67,12 @@ public class BooksService extends JsonResponseBuilder {
 
     private boolean AlreadyReservedForHomeCheck(Integer bookId, User user) throws SQLException {
         return !MySqlHomeReservationDAO.getInstance().isCreatedByBookAndUser(bookId, user)
-                ||  errorVSErrorMessage(Message.ALREADY_RESERVED);
+                || errorVSErrorMessage(Message.ALREADY_RESERVED);
     }
 
     private boolean AlreadyReservedForRRoomCheck(Integer bookId, User user) throws SQLException {
         return !MySqlRRoomReservationDAO.getInstance().isCreatedByBookAndUser(bookId, user)
-                ||  errorVSErrorMessage(Message.ALREADY_RESERVED);
+                || errorVSErrorMessage(Message.ALREADY_RESERVED);
     }
 
     private Date calculateDueDate(Integer reserveDuration) {
@@ -104,7 +104,7 @@ public class BooksService extends JsonResponseBuilder {
 
     private boolean excessCheck(Integer userId, Integer bookId, Integer maxAmount) throws SQLException {
         return MySqlCrossTableDAO.getInstance().bookIssuingExcessCheck(userId, bookId, maxAmount)
-                ||  errorVSErrorMessage(Message.TOO_MUCH_BOOKS_WANTED);
+                || errorVSErrorMessage(Message.TOO_MUCH_BOOKS_WANTED);
     }
 
     private boolean alreadyIssuedCheck(Integer bookId, Integer userId) throws SQLException {
@@ -146,40 +146,6 @@ public class BooksService extends JsonResponseBuilder {
         }
     }
 
-    /**
-     * Finds reservation by specified {@code reservationId} and uses it's data to fill the other parameters.
-     * Returns all nulls if reservation is not found.
-     * @param reservationId
-     * @param book Information found about reserved book will be assigned to this reference.
-     * @param userId Id of the user, who reserved the book will be assigned to this reference.
-     * @param issueType specify type of issue operation (\"Home\" or \"RRoom\")
-     * @throws SQLException
-     */
-    private void getDataFromReservation(Integer reservationId ,Book book, Integer userId, String issueType) throws SQLException {
-        MySqlBookDAO bookDAO = MySqlBookDAO.getInstance();
-
-        switch (issueType) {
-            case HOME_ISSUE_TYPE:{
-                HomeReservation homeReservation = MySqlHomeReservationDAO.getInstance().getById(reservationId);
-                if (homeReservation != null) {
-                    book = bookDAO.findBookById(homeReservation.getBookId());
-                    userId = homeReservation.getUserId();
-                    issueType = HOME_ISSUE_TYPE;
-                }
-                return;
-            }
-            case RROOM_ISSUE_TYPE:{
-                RRoomReservation rRoomReservation = MySqlRRoomReservationDAO.getInstance().getById(reservationId);
-                if (rRoomReservation != null) {
-                    book = bookDAO.findBookById(rRoomReservation.getBookId());
-                    userId = rRoomReservation.getUserId();
-                    issueType = RROOM_ISSUE_TYPE;
-                }
-                return;
-            }
-        }
-    }
-
     public boolean returnBook(Integer bookLoanId) throws SQLException {
         BookLoan bookLoan = MySqlBookLoanDAO.getInstance().findBookLoanById(bookLoanId);
         if (bookLoan == null || bookLoan.getReturnDate() != null) {
@@ -215,7 +181,7 @@ public class BooksService extends JsonResponseBuilder {
             }
 
             Date dueDate = calculateDueDate(reserveDuration);
-            if (isAvailableCheck(book.getId(),"Home")
+            if (isAvailableCheck(book.getId(), "Home")
                     && MySqlCrossTableDAO.getInstance().insertHomeReservation(book, user, dueDate)) {
 
                 return successVSMessageAndPageReload(Message.RESERVATION_SUCCEEDED);
@@ -237,7 +203,7 @@ public class BooksService extends JsonResponseBuilder {
             }
 
             Date dueTime = calculateDueTime(LibraryConfig.getInstance().getMaxRRoomReservationDuration());
-            if (isAvailableCheck(book.getId(),"RRoom")
+            if (isAvailableCheck(book.getId(), "RRoom")
                     && MySqlCrossTableDAO.getInstance().insertRRoomReservation(book, user, dueTime)) {
 
                 return successVSMessageAndPageReload(Message.RESERVATION_SUCCEEDED);
@@ -254,27 +220,20 @@ public class BooksService extends JsonResponseBuilder {
         emailService.sendReservationNotification(user, bookId);
     }
 
-    public boolean issueBook(Integer reservationId,String reservationType) throws SQLException {
-        Book book = null;
-        Integer userId = null;
-        String issueType = reservationType ;
+    public boolean issueBook(Integer reservationId, String reservationType) throws SQLException {
+        IReservation reservation = getDataFromReservation(reservationId, reservationType);
 
-        getDataFromReservation(reservationId, book, userId, issueType);
-
-        if (book == null) {
+        if (reservation.getBook() == null) {
             return errorVSErrorMessage(Message.FAILED_OPERATION);
         }
 
         synchronized (MONITOR) {
-            if (isProhibited(book.getId())) {
-                return errorVSMessageAndPageReload(Message.PROHIBITED_BOOK);
-            }
-
-            if (alreadyIssuedCheck(book.getId(), userId)
-                    && excessCheck(userId, book.getId(), LibraryConfig.getInstance().getMaxBooksToGive())
-                    && isAvailableCheck(book.getId(), issueType)
-                    && MySqlCrossTableDAO.getInstance().createBookLoanFromReservation(reservationId, book.getId(), userId,
-                    issueType, LibraryConfig.getInstance().getMaxDurationOfBookLoan())) {
+            if (alreadyIssuedCheck(reservation.getBookId(), reservation.getUserId())
+                    && !isProhibited(reservation.getBookId())
+                    && excessCheck(reservation.getUserId(), reservation.getBookId(), LibraryConfig.getInstance().getMaxBooksToGive())
+                    && isAvailableCheck(reservation.getBookId(), reservationType)
+                    && MySqlCrossTableDAO.getInstance().createBookLoanFromReservation(reservationId,reservation.getBookId(), reservation.getUserId(),
+                    reservationType, LibraryConfig.getInstance().getMaxDurationOfBookLoan())) {
 
                 return successVSMessage(Message.SUCCESSFULL_OPERATION);
             }
@@ -293,18 +252,42 @@ public class BooksService extends JsonResponseBuilder {
         return bookLoan;
     }
 
-    public IReservation findReservationVSUser(Integer reservationId,String reservationType) throws SQLException {
+    private IReservation getDataFromReservation(Integer reservationId, String issueType) throws SQLException {
+        MySqlBookDAO bookDAO = MySqlBookDAO.getInstance();
         IReservation reservation = null;
-        switch (reservationType) {
-            case HOME_ISSUE_TYPE:{
+        switch (issueType) {
+            case HOME_ISSUE_TYPE: {
                 reservation = MySqlHomeReservationDAO.getInstance().getById(reservationId);
                 break;
             }
-            case RROOM_ISSUE_TYPE:{
+            case RROOM_ISSUE_TYPE: {
                 reservation = MySqlRRoomReservationDAO.getInstance().getById(reservationId);
             }
         }
-        return reservation != null ? addReservationDataObject(reservation) : null;
+        if (reservation != null) {
+            reservation.setBook(bookDAO.findBookById(reservation.getBookId()));
+        }
+        return reservation;
+    }
+
+    public IReservation findReservationVSUser(Integer reservationId, String reservationType) throws SQLException {
+        IReservation reservation = null;
+        switch (reservationType) {
+            case HOME_ISSUE_TYPE: {
+                reservation = MySqlHomeReservationDAO.getInstance().getById(reservationId);
+                break;
+            }
+            case RROOM_ISSUE_TYPE: {
+                reservation = MySqlRRoomReservationDAO.getInstance().getById(reservationId);
+            }
+        }
+        if (reservation != null) {
+            reservation.setUser(MySqlUserDAO.getInstance().findById(reservation.getUserId()));
+            reservation.setBook(MySqlBookDAO.getInstance().findBookById(reservation.getBookId()));
+            return addReservationDataObject(reservation);
+        }
+        setSuccessFlag(false);
+        return null;
     }
 
     public boolean addBook(String bookName, String author, Integer year, String genre, String description,

@@ -4,10 +4,7 @@ import com.diachuk.library.dao.entities.*;
 import com.diachuk.library.dao.factory.MySql.MySqlDAOFactory;
 import com.diachuk.library.dao.interfaces.ICrossTableDAO;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -67,26 +64,24 @@ public class MySqlCrossTableDAO implements ICrossTableDAO {
         if (connection == null) {
             return false;
         }
-        try (
-                PreparedStatement deleteReservationStm = connection.prepareStatement("DELETE FROM ? WHERE id = ?");
-                PreparedStatement decreaseAvailableStm = connection.prepareStatement("UPDATE book SET ? WHERE id = ?");
+        try (PreparedStatement decreaseAvailableStm = connection.prepareStatement("UPDATE book SET availableInRRoom = (availableInRRoom - 1) WHERE id = ?");
                 PreparedStatement insertBookLoanStm = connection.prepareStatement(
                         "INSERT INTO bookloan (userId, bookId, type, tookDate, dueDate) " +
-                                "VALUES (?,?,?,curdate(),(CURDATE() + INTERVAL ? DAY))");) {
+                                "VALUES (?,?,?,curdate(),(CURDATE() + INTERVAL ? DAY))")) {
 
-
+            StringBuilder deleteReservationQuery = new StringBuilder("DELETE FROM ");
             switch (type) {
                 case MySqlBookLoanDAO.RROOM_TYPE: {
-                    deleteReservationStm.setString(1, "rroomreservation");
-                    decreaseAvailableStm.setString(1, "availableInRRoom = (availableInRRoom - 1)");
+                    deleteReservationQuery.append("rroomreservation ");
+                    break;
                 }
                 case MySqlBookLoanDAO.HOME_TYPE: {
-                    deleteReservationStm.setString(1, "homereservation");
-                    decreaseAvailableStm.setString(1, "availableForHome = (availableForHome - 1)");
+                    deleteReservationQuery.append("homereservation ");
                 }
             }
-            deleteReservationStm.setInt(2, reservationId);
-            decreaseAvailableStm.setInt(2, bookId);
+            deleteReservationQuery.append(" WHERE id = " + reservationId);
+
+            decreaseAvailableStm.setInt(1, bookId);
             insertBookLoanStm.setInt(1, userId);
             insertBookLoanStm.setInt(2, bookId);
             insertBookLoanStm.setString(3, type);
@@ -94,7 +89,8 @@ public class MySqlCrossTableDAO implements ICrossTableDAO {
 
             connection.setAutoCommit(false);
 
-            int result1 = deleteReservationStm.executeUpdate();
+            Statement deleteReservationStm = connection.createStatement();
+            int result1 = deleteReservationStm.executeUpdate(deleteReservationQuery.toString());
             int result2 = decreaseAvailableStm.executeUpdate();
             int result3 = insertBookLoanStm.executeUpdate();
             if (result1 == 1 && result2 == 1 && result3 == 1) {
