@@ -22,7 +22,7 @@ public class Book {
     private int numberOfVotes;
     private String image;
     private int currentUserVote;
-    private boolean isBanned;
+    private boolean banned;
 
     public int getId() {
         return id;
@@ -145,23 +145,23 @@ public class Book {
     }
 
     public boolean isBanned() {
-        return isBanned;
+        return banned;
     }
 
     public void setBanned(boolean banned) {
-        isBanned = banned;
+        this.banned = banned;
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Book{");
+        final StringBuilder sb = new StringBuilder("Book (");
         sb.append("id=").append(id);
         sb.append(", name='").append(name).append('\'');
         sb.append(", author='").append(author).append('\'');
         sb.append(", genre='").append(genre).append('\'');
         sb.append(", year='").append(year).append('\'');
         sb.append(", pages=").append(pages);
-        sb.append('}');
+        sb.append(')');
         return sb.toString();
     }
 

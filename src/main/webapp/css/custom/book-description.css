@@ -9,10 +9,20 @@
   text-indent: 30px;
 }
 
+.fields {
+  margin-top: 25px;
+}
+
 .reserve-section .btn,
 .reserve-section select {
   width: 100%;
   margin: 5px;
+}
+
+img {
+  width: 250px;
+  margin-left: 70px;
+  margin-bottom: 10px;
 }
 
 body {

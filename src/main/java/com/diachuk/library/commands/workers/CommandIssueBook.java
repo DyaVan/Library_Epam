@@ -20,9 +20,10 @@ public class CommandIssueBook implements ICommand {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
         Integer reservationId = Integer.parseInt(request.getParameter("reservationId"));
+        String reservationType = request.getParameter("reservationType");
 
         BooksService booksService = new BooksService();
-        booksService.issueBook(reservationId);
+        booksService.issueBook(reservationId,reservationType);
 
         String jsonResponse = booksService.buildJsonResponse().extractJsonString();
 

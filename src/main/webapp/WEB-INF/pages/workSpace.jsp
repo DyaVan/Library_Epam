@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="my" uri="/WEB-INF/myTags" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,7 +26,7 @@
     <script src="js\workspace\work-space-issue.js"></script>
     <script src="js\workspace\work-space-return.js"></script>
     <script src="js\workspace\work-space-books.js"></script>
-<%--<script src="js\workspace\work-space-answer.js"></script>--%>
+    <%--<script src="js\workspace\work-space-answer.js"></script>--%>
     <%--<script src="js\workspace\work-space-config.js"></script>--%>
     <%--<script src="js\workspace\work-space-roles.js"></script>--%>
     <%--<script src="js\workspace\work-space-userConfig.js"></script>--%>
@@ -67,6 +68,12 @@
                                    value="">
                         </div>
                         <div class="col-md-3">
+                            <select id="reservation-type" class="form-control" name="reservation-type">
+                                <option value="Home">Home</option>
+                                <option value="RRoom">Reading room</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
                             <button id="btn-search-reservation" class="btn btn-default ">Search</button>
                         </div>
                     </div>
@@ -85,7 +92,7 @@
 
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-4">
                             <p><strong>Email:</strong></p>
                             <div id="email-place-issue">
 
@@ -151,7 +158,7 @@
 
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-4">
                             <p><strong>Email:</strong></p>
                             <div id="email-place-return">
 
@@ -306,7 +313,7 @@
                         <form id="form-book-editor" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <img id="book-img" src="img\book-example.jpg" alt="Book image">
+                                    <my:bookImage/>
                                     <input id="file-input" type="file"/>
                                 </div>
                                 <div class="col-md-8">
@@ -315,7 +322,8 @@
                                             <strong>Name:</strong>
                                         </div>
                                         <div class="col-md-6">
-                                            <input id="name-mod-book" type="text" class="form-control" name="bookName" value="">
+                                            <input id="name-mod-book" type="text" class="form-control" name="bookName"
+                                                   value="">
                                         </div>
                                     </div>
                                     <div class="row book-description-item">
@@ -323,7 +331,8 @@
                                             <strong>Author</strong>
                                         </div>
                                         <div class="col-md-6">
-                                            <input id="author-mod-book" type="text" class="form-control" name="author" value="">
+                                            <input id="author-mod-book" type="text" class="form-control" name="author"
+                                                   value="">
                                         </div>
                                     </div>
                                     <div class="row book-description-item">
@@ -419,7 +428,7 @@
                                 Modify
                             </button>
                             <%--<button type="button" class="btn btn-default btn-book-save hide" name="button">--%>
-                                <%--Save--%>
+                            <%--Save--%>
                             <%--</button>--%>
                         </div>
                     </div>

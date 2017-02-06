@@ -5,11 +5,9 @@ import com.diachuk.library.dao.implementations.MySql.MySqlCrossTableDAO;
 import com.diachuk.library.dao.implementations.MySql.MySqlQuestionDAO;
 import com.diachuk.library.dao.implementations.MySql.MySqlUserDAO;
 import com.diachuk.library.manage.Message;
-import com.diachuk.library.manage.NavigationManager;
+import com.diachuk.library.services.json.JsonResponseBuilder;
 import org.apache.commons.validator.routines.EmailValidator;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.http.HttpServletRequest;
 import java.sql.SQLException;
 import java.util.ArrayList;
 

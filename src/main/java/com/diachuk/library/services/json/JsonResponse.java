@@ -1,4 +1,4 @@
-package com.diachuk.library.services;
+package com.diachuk.library.services.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

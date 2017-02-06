@@ -40,8 +40,35 @@
 
     };
 
+    var issue = function () {
+        var reservationId = $("#reservationId-input").val();
+        var reservationType = $("#reservation-type").val();
+
+        var url = "Library?command=issueBook&reservationId=" + reservationId + "&reservationType=" + reservationType;
+        $.ajax({
+            url: url,
+            type: "get",
+            success: function (data) {
+                $("#issueTable").empty();
+                $("#name-place-issue").empty();
+                $("#surname-place-issue").empty();
+                $("#email-place-issue").empty();
+                if (data.successFlag) {
+                    if (!data.successFlag) {
+                        $("#error-message-text").html("<p>" + data.errorMessage + "</p>")
+                        $("#error-message").show();
+                    } else {
+                        $("#success-message-text").html("<p>" + data.successMessage + "</p>")
+                        $("#success-message").show();
+                    }
+                }
+            }
+        });
+    };
+
     $(document).ready(function () {
         $("#btn-search-reservation").on('click', reservationSearch);
+        $("#btn-issue").on('click', issue);
     });
 
 })();

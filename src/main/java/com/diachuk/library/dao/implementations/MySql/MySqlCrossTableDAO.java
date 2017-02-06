@@ -28,13 +28,24 @@ public class MySqlCrossTableDAO implements ICrossTableDAO {
     private MySqlCrossTableDAO() {
     }
 
+    /**
+     * Checks if user with specified {@code userId} has eligible amount of loans and home reservations.
+     *
+     * @param userId
+     * @param bookId
+     * @param maxAmount
+     * @return Returns true if amount of current user loans and home reservations (except book with specified {@code bookId}
+     * is less then specified {@code maxAmount}.
+     * @throws SQLException
+     */
     public boolean bookIssuingExcessCheck(Integer userId, Integer bookId, Integer maxAmount) throws SQLException {
         if (userId == null || maxAmount == null) {
             return false;
         }
         try (Connection connection = MySqlDAOFactory.createConnection();
              PreparedStatement stm = connection.prepareStatement(
-                     "SELECT COUNT(bookId) AS amount FROM ( (SELECT bookId FROM bookloan WHERE userId = ?) UNION " +
+                     "SELECT COUNT(bookId) AS amount FROM ((SELECT bookId FROM bookloan " +
+                             "WHERE userId = ? AND (returnDate IS NULL)) UNION " +
                              "(SELECT bookId FROM homereservation WHERE (userId = ?) AND (bookId <> ?))) AS books")) {
 
             stm.setInt(1, userId);
@@ -117,6 +128,7 @@ public class MySqlCrossTableDAO implements ICrossTableDAO {
             insertReservationStm.setInt(2, bookRequest.getBookId());
             insertReservationStm.setInt(3, reservationDuration);
 
+            connection.setAutoCommit(false);
             int result1 = deleteRequestStm.executeUpdate();
             int result2 = insertReservationStm.executeUpdate();
             if (result1 == 1 && result2 == 1) {
@@ -318,77 +330,6 @@ public class MySqlCrossTableDAO implements ICrossTableDAO {
         }
     }
 
-    public IReservation findReservationVSUser(Integer reservationId) throws SQLException {
-        if (reservationId == null) {
-            return null;
-        }
-
-        try (Connection connection = MySqlDAOFactory.createConnection();
-             PreparedStatement searchInHomeReservationsStm = connection.prepareStatement(
-                     "SELECT homereservation.id, homereservation.bookId, homereservation.dueDate, " +
-                             "homereservation.userId, book.name, book.author, user.name AS userName, " +
-                             "user.surname AS userSurname, user.email AS userEmail FROM homereservation " +
-                             "JOIN book ON (homereservation.bookId = book.id) " +
-                             "JOIN user ON (homereservation.userId = user.id) WHERE homereservation.id = ?");
-             PreparedStatement searchInRRoomReservationsStm = connection.prepareStatement(
-                     "SELECT rroomreservation.id, rroomreservation.bookId, rroomreservation.dueTime, " +
-                             "rroomreservation.userId, book.name, book.author, user.name AS userName, " +
-                             "user.surname AS userSurname, user.email AS userEmail FROM rroomreservation " +
-                             "JOIN book ON (rroomreservation.bookId = book.id) " +
-                             "JOIN user ON (rroomreservation.userId = user.id) WHERE rroomreservation.id = ?")) {
-
-            searchInHomeReservationsStm.setInt(1, reservationId);
-            ResultSet homeReservationRs = searchInHomeReservationsStm.executeQuery();
-
-            if (homeReservationRs.next()) {
-                HomeReservation homeReservation = new HomeReservation();
-                homeReservation.setId(homeReservationRs.getInt(MySqlHomeReservationDAO.ID_COLUMN));
-                homeReservation.setBookId(homeReservationRs.getInt(MySqlHomeReservationDAO.BOOK_ID_COLUMN));
-                homeReservation.setUserId(homeReservationRs.getInt(MySqlHomeReservationDAO.USER_ID_COLUMN));
-                homeReservation.setDueTo(homeReservationRs.getDate(MySqlHomeReservationDAO.DUE_DATE_COLUMN));
-
-                Book book = new Book();
-                book.setName(homeReservationRs.getString(MySqlBookDAO.NAME_COLUMN) );
-                book.setAuthor(homeReservationRs.getString(MySqlBookDAO.AUTHOR_COLUMN));
-                homeReservation.setBook(book);
-
-                User user = new User();
-                user.setName(homeReservationRs.getString("userName"));
-                user.setSurname(homeReservationRs.getString("userSurname"));
-                user.setEmail(homeReservationRs.getString("userEmail"));
-                homeReservation.setUser(user);
-
-                return homeReservation;
-            }
-
-            searchInRRoomReservationsStm.setInt(1, reservationId);
-            ResultSet rRoomReservationsRs = searchInRRoomReservationsStm.executeQuery();
-
-            while (rRoomReservationsRs.next()) {
-                RRoomReservation rRoomReservation = new RRoomReservation();
-                rRoomReservation.setId(homeReservationRs.getInt(MySqlRRoomReservationDAO.ID_COLUMN));
-                rRoomReservation.setBookId(homeReservationRs.getInt(MySqlRRoomReservationDAO.BOOK_ID_COLUMN));
-                rRoomReservation.setUserId(homeReservationRs.getInt(MySqlRRoomReservationDAO.USER_ID_COLUMN));
-                rRoomReservation.setDueTo(homeReservationRs.getDate(MySqlRRoomReservationDAO.DUE_TIME_COLUMN));
-
-                Book book = new Book();
-                book.setName(MySqlBookDAO.NAME_COLUMN);
-                book.setAuthor(MySqlBookDAO.AUTHOR_COLUMN);
-                rRoomReservation.setBook(book);
-
-                User user = new User();
-                user.setName(homeReservationRs.getString("userName"));
-                user.setSurname(homeReservationRs.getString("userSurname"));
-                user.setEmail(homeReservationRs.getString("userEmail"));
-                rRoomReservation.setUser(user);
-
-                return rRoomReservation;
-            }
-
-            return null;
-        }
-    }
-
     public ArrayList<BookLoan> findNotReturnedOverdueBookLoans() throws SQLException {
         ArrayList<BookLoan> overdueBookLoans = new ArrayList<>();
         try (Connection connection = MySqlDAOFactory.createConnection();
@@ -427,7 +368,7 @@ public class MySqlCrossTableDAO implements ICrossTableDAO {
     }
 
     public boolean insertRRoomReservation(Book book, User user, Date dueTime) throws SQLException {
-        if (book == null || book.getAvailableForHome() <= 0 || user == null || dueTime == null || dueTime.compareTo(new Date()) <= 0) {
+        if (book == null || book.getAvailableInRRoom() <= 0 || user == null || dueTime == null || dueTime.compareTo(new Date()) <= 0) {
             return false;
         }
 
@@ -436,7 +377,7 @@ public class MySqlCrossTableDAO implements ICrossTableDAO {
                      "UPDATE book SET book.availableInRRoom = (book.availableInRRoom - 1) WHERE (book.id = ?) " +
                              "AND (book.availableInRRoom > 0)");
              PreparedStatement stmForReservationTable = connection.prepareStatement(
-                     "INSERT INTO rroomreservation (rroomreservation.bookId, rroomreservation.userId, rroomreservation.dueDate) VALUES (?,?,?)"
+                     "INSERT INTO rroomreservation (rroomreservation.bookId, rroomreservation.userId, rroomreservation.dueTime) VALUES (?,?,?)"
              )) {
 
             stmForBookTable.setInt(1,book.getId());

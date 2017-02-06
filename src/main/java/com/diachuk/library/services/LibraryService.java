@@ -6,8 +6,8 @@ import com.diachuk.library.dao.implementations.MySql.MySqlQuestionDAO;
 import com.diachuk.library.dao.implementations.MySql.MySqlRoleDAO;
 import com.diachuk.library.dao.implementations.MySql.MySqlUserDAO;
 import com.diachuk.library.manage.Message;
+import com.diachuk.library.services.json.JsonResponseBuilder;
 
-import javax.jws.soap.SOAPBinding;
 import java.sql.SQLException;
 
 /**

@@ -1,12 +1,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 
 <head>
-    <%--<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">--%>
-    <meta http-equiv="content-type" content="text/html; charset=cp1251">
-
+    <meta charset="UTF-8">
+    <%--<meta name="viewport" content="width=device-width, initial-scale=1">--%>
     <title>Book library</title>
 
     <link href="css\bootstrap.min.css" rel="stylesheet">
@@ -24,11 +23,12 @@
 
 
 <body>
-<div class="container-fluid">
+<div id="main-section" class="container-fluid">
 
     <c:import url="WEB-INF/pages/parts/header.jsp"/>
 
     <div class="row search-section">
+
         <video loop muted autoplay class="bg-video">
             <source src="videos/bg-video.mp4" type="video/mp4">
         </video>
@@ -40,27 +40,29 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-offset-5 col-md-2">
-                    <select id="genreFilter" class="filter-select" name="">
-                        <option value="" disabled selected>Select filter</option>
-                        <option value="history">History</option>
-                        <option value="poetry">Poetry</option>
-                        <option value="">Test value 3</option>
-                        <option value="">Test value 4</option>
-                    </select>
-                </div>
-                <div class="col-md-offset-5 col-md-2">
-                    <input id="searchLine" class="search-input" type="text" name="" value=""
-                           placeholder="Input there text">
-                </div>
-                <div class="col-md-offset-6 col-md-1">
-                    <button id="searchButton" class="search-btn" type="button" name="button">Search</button>
-                    <input type="hidden" id="savedSearchLine" value=""/>
-                    <input type="hidden" id="offset" value="0"/>
-                </div>
+                <form id="searchform">
+                    <div class="col-md-offset-5 col-md-2">
+                        <select id="genreFilter" class="filter-select" name="">
+                            <option value="" disabled selected>Select filter</option>
+                            <option value="">All genres</option>
+                            <option value="history">History</option>
+                            <option value="poetry">Poetry</option>
+                            <option value="fiction">Fiction</option>
+                        </select>
+                    </div>
+                    <div class="col-md-offset-5 col-md-2">
+                        <input id="searchLine" class="search-input" type="text" name="" value=""
+                               placeholder="Input there text">
+                    </div>
+                    <div class="col-md-offset-6 col-md-1">
+                        <button id="searchButton" class="search-btn" type="submit" name="button">Search</button>
+
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+
     <div class="row name-section">
         <h4>Library</h4>
     </div>
@@ -81,6 +83,7 @@
 </body>
 
 </html>
+
 
 
 

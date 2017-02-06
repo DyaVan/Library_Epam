@@ -21,11 +21,14 @@
                         if(!data.successFlag){
                             $("#error-message-text").html("<p>"+ data.errorMessage+"</p>")
                             $("#error-message").show();
+                        }else {
+                            window.location.replace("/index.jsp");
                         }
 
                     }else {
-                        var doc = document.documentElement;
-                        doc.innerHTML = data;
+                        window.location.replace("http://localhost:8080/index.jsp");
+                        // var doc = document.documentElement;
+                        // doc.innerHTML = data;
                     }
                 });
 

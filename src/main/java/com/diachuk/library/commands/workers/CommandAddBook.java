@@ -1,4 +1,4 @@
-package com.diachuk.library.commands.NEW;
+package com.diachuk.library.commands.workers;
 
 import com.diachuk.library.commands.ICommand;
 import com.diachuk.library.controller.LibraryServlet;

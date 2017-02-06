@@ -41,8 +41,33 @@
 
     };
 
+    var acceptReturn = function () {
+        var bookLoanId = $("#bookLoanId-input").val();
+        var url = "Library?command=returnBook&bookLoanId=" + bookLoanId;
+        $.ajax({
+            url: url,
+            type: "get",
+            success: function (data) {
+                $("#returnTable").empty();
+                $("#name-place-return").empty();
+                $("#surname-place-return").empty();
+                $("#email-place-return").empty();
+                if (data.successFlag) {
+                    if (!data.successFlag) {
+                        $("#error-message-text").html("<p>" + data.errorMessage + "</p>")
+                        $("#error-message").show();
+                    } else {
+                        $("#success-message-text").html("<p>" + data.successMessage + "</p>")
+                        $("#success-message").show();
+                    }
+                }
+            }
+        });
+    };
+
     $(document).ready(function () {
         $("#btn-search-bookLoan").on('click', bookLoanSearch);
+        $("#btn-return").on('click', acceptReturn);
     });
 
 })();

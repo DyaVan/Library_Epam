@@ -10,7 +10,7 @@
 
     <context-param>
         <param-name>file-upload</param-name>
-        <param-value>D:\EPAM\Library\src\main\webapp\WEB-INF\bookImages\</param-value>
+        <param-value>\bookImages\</param-value>
         <description>Where to store book images</description>
     </context-param>
 

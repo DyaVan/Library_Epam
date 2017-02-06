@@ -1,4 +1,4 @@
-package com.diachuk.library.services;
+package com.diachuk.library.services.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,6 +23,7 @@ public abstract class JsonResponseBuilder {
 
     public JsonResponseBuilder appendErrorMessage(String errorMessage) {
         this.errorMessage.append("- " + errorMessage + "<br/>");
+        successFlag = false;
         return this;
     }
 

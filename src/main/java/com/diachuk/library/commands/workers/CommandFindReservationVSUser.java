@@ -18,9 +18,10 @@ public class CommandFindReservationVSUser implements ICommand {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
         Integer reservationId = Integer.parseInt(request.getParameter("reservationId"));
+        String reservationType = request.getParameter("reservationType");
 
         BooksService booksService = new BooksService();
-        booksService.findReservationVSUser(reservationId);
+        booksService.findReservationVSUser(reservationId,reservationType);
 
         String jsonResponse = booksService.buildJsonResponse().extractJsonString();
 

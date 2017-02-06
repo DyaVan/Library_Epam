@@ -2,6 +2,7 @@ package com.diachuk.library.services;
 
 import com.diachuk.library.dao.entities.Book;
 import com.diachuk.library.dao.implementations.MySql.MySqlBookDAO;
+import com.diachuk.library.services.json.JsonResponseBuilder;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.regex.Pattern;
 /**
  * Created by VA-N_ on 11.01.2017.
  */
-public class SearchBooksService  extends JsonResponseBuilder{
+public class SearchBooksService  extends JsonResponseBuilder {
 
     private String searchLine;
     private String genreFilter;

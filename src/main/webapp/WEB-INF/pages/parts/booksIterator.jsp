@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="my" uri="/WEB-INF/myTags" %>
 <%@page contentType="applicato/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 
@@ -7,7 +8,8 @@
     <a href="/Library?command=goToSpecificBook&bookId=${book.id}">
         <div class="row item-section">
             <div class="col-md-2">
-                <img class="book-logo" src="img\book-example.jpg" alt="img\book-example"/>
+                <my:bookImage bookId="${book.id}"/>
+                <%--<img class="book-logo" src="img\book-example.jpg" alt="img\book-example"/>--%>
             </div>
             <div class="col-md-4">
                 <p>ID:<c:out value="${book.id}"/></p>

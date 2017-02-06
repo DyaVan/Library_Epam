@@ -9,6 +9,7 @@
     var readyFunc = function () {
         $("#searchform").submit(function (event) {
             event.preventDefault();
+            event.stopPropagation();
 
             lastSearch = "";
             savedSearchLine = $("#searchLine").val();
@@ -18,17 +19,21 @@
 
             var url = "Library?command=searchBooks&searchLine=" + savedSearchLine + "&genreFilter=" + filter + "&offset=" + offset;
 
-            $.ajax({
-                url: url,
-                type: "get",
-                success: function (data) {
-                    $("#loader-section").html(data);
-                    offset++;
-                },
-                error: function (data) {
-                    alert(data.responseText)
-                }
-            })
+            if (url != lastSearch) {
+                lastSearch = url;
+                $.ajax({
+                    url: url,
+                    type: "get",
+                    success: function (data) {
+                        $("#loader-section").html(data);
+                        offset++;
+                    },
+                    error: function (data) {
+                        alert(data.responseText)
+                    }
+                })
+            }
+
         });
 
         $(window).on("scroll", function (event) {

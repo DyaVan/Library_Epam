@@ -1,8 +1,8 @@
 package com.diachuk.library.manage;
 
 import com.diachuk.library.commands.*;
-import com.diachuk.library.commands.NEW.CommandAddBook;
-import com.diachuk.library.commands.NEW.CommandEditBook;
+import com.diachuk.library.commands.workers.CommandAddBook;
+import com.diachuk.library.commands.workers.CommandEditBook;
 import com.diachuk.library.commands.clients.*;
 import com.diachuk.library.commands.free.*;
 import com.diachuk.library.commands.workers.*;

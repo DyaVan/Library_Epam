@@ -31,10 +31,9 @@ public class CommandLogIn implements ICommand {
             SessionManagerService sessionManagerService = new SessionManagerService(request);
             sessionManagerService.startNewSession(currentUser);
 
-            response.sendRedirect(NavigationManager.getInstance().getPage(NavigationManager.MAIN_PAGE));
-        }else {
-            String jsonResponse = userService.buildJsonResponse().extractJsonString();
-            LibraryServlet.sendJsonResponse(jsonResponse, response);
+            userService.addDataObject("newPage", NavigationManager.getInstance().getPage(NavigationManager.MAIN_PAGE));
         }
+        String jsonResponse = userService.buildJsonResponse().extractJsonString();
+        LibraryServlet.sendJsonResponse(jsonResponse, response);
     }
 }

@@ -168,6 +168,9 @@ public class MySqlBookDAO implements IBookDAO {
     }
 
     public Book findBookById(Integer bookId) throws SQLException {
+        if (bookId == null) {
+            return null;
+        }
         try (Connection connection = MySqlDAOFactory.createConnection();
              PreparedStatement stm = connection.prepareStatement("SELECT book.id, book.name, book.author, book.genre, " +
                      "book.year, book.readersRate, book.numberOfVotes, book.description, book.pages, book.amountForHome, " +

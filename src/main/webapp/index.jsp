@@ -43,11 +43,23 @@
                <form id="searchform">
                 <div class="col-md-offset-5 col-md-2">
                     <select id="genreFilter" class="filter-select" name="">
-                        <option value="" disabled selected>Select filter</option>
-                        <option value="">All genres</option>
+                        <option value="" selected >All genres</option>
                         <option value="history">History</option>
                         <option value="poetry">Poetry</option>
                         <option value="fiction">Fiction</option>
+                        <option value="childrens">Childrens</option>
+                        <option value="fantasy">Fantasy</option>
+                        <option value="philosophy">Philosophy</option>
+                        <option value="economics">Economics</option>
+                        <option value="non fiction">Non fiction</option>
+                        <option value="horror">Horror</option>
+                        <option value="dystopia">Dystopia</option>
+                        <option value="contemporary">Contemporary</option>
+                        <option value="romance">Romance</option>
+                        <option value="programming">Programming</option>
+                        <option value="business">Business</option>
+                        <option value="classics">Classics</option>
+                        <option value="science">Science</option>
                     </select>
                 </div>
                 <div class="col-md-offset-5 col-md-2">

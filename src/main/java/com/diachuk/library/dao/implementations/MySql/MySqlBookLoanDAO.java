@@ -40,14 +40,21 @@ public class MySqlBookLoanDAO implements IBookLoanDAO {
 
     }
 
-
+    /**
+     * Checks if there is not returned book loan of book with specified {@code bookId} by user with specified {@code userId}
+     * @param bookId
+     * @param userId
+     * @return
+     * @throws SQLException
+     */
     public boolean checkExistenceByBookVSUser(Integer bookId, Integer userId) throws SQLException {
         if (bookId == null || userId == null) {
             return false;
         }
         try (Connection connection = MySqlDAOFactory.createConnection();
              PreparedStatement stm = connection.prepareStatement(
-                     "SELECT bookloan.id FROM bookloan WHERE (bookloan.userid = ?) AND (bookloan.bookId = ?) LIMIT 1")) {
+                     "SELECT bookloan.id FROM bookloan WHERE (bookloan.userid = ?) " +
+                             "AND (bookloan.bookId = ?) AND bookloan.returnDate IS NULL LIMIT 1")) {
 
             stm.setInt(1, userId);
             stm.setInt(2, bookId);

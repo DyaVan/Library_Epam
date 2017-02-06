@@ -33,7 +33,8 @@ public class MySqlRoleDAO implements IRoleDAO {
      * @return int - access level value.
      * @throws SQLException
      */
-    public int getAccessLevel(int roleId) throws SQLException {
+    public Integer getAccessLevel(Integer roleId) throws SQLException {
+        Integer accLvl;
         try (Connection connection = MySqlDAOFactory.createConnection();
              PreparedStatement stm = connection.prepareStatement("SELECT role.accessLevel FROM role WHERE role.id = ? LIMIT 1")) {
 
@@ -41,12 +42,13 @@ public class MySqlRoleDAO implements IRoleDAO {
 
             ResultSet rs = stm.executeQuery();
             if (rs.next()) {
-                return rs.getInt("accessLevel");
+                accLvl = rs.getInt("accessLevel");
+
             }else {
-                //todo:Logging
-                return 0;
+                accLvl = 0;
             }
         }
+        return  accLvl;
     }
 
     public boolean deleteRole(int roleId) throws SQLException {

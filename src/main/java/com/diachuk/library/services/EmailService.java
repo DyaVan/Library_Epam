@@ -35,6 +35,7 @@ public class EmailService {
     private static final String RESERVATION_NOTIFICATION_MESSAGE = "reservation_notification_message";
     private static final String OVERDUE_NOTIFICATION_SUBJECT = "ovardue_notification_subject";
     private static final String OVERDUE_NOTIFICATION_MESSAGE = "ovardue_notification_message";
+    private static final String EMAIL_FOOTER = "email_footer";
 
     private String emailAddress;
     private String emailPassword;
@@ -53,7 +54,6 @@ public class EmailService {
     }
 
     public void sendEmail(String toEmail, String subject, String body) {
-
         Session session = createSession();
 
         try {
@@ -64,15 +64,10 @@ public class EmailService {
             msg.addHeader("Content-Transfer-Encoding", "8bit");
 
             msg.setFrom(new InternetAddress("no_reply." + emailAddress, personal + "_No-Reply"));
-
             msg.setReplyTo(InternetAddress.parse("no_reply." + emailAddress, false));
-
             msg.setSubject(subject, "UTF-8");
-
             msg.setText(body, "UTF-8");
-
             msg.setSentDate(new Date());
-
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail, false));
 
             Transport.send(msg);
@@ -101,22 +96,27 @@ public class EmailService {
 
     public void sendBadQuestionNotification(User user) {
         String subject = resource.getString(BAD_QUESTION_SUBJECT);
-        String messageBody = resource.getString(BAD_QUESTION_MESSAGE);
+        String messageBody = resource.getString(BAD_QUESTION_MESSAGE) + resource.getString(EMAIL_FOOTER);
         sendEmail(user.getEmail(), subject, messageBody);
     }
 
     public void sendQuestionsBanNotification(User user) {
         String subject = resource.getString(QUESTIONS_BAN_SUBJECT);
-        String messageBody = resource.getString(QUESTIONS_BAN_MESSAGE);
+        String messageBody = resource.getString(QUESTIONS_BAN_MESSAGE) + resource.getString(EMAIL_FOOTER);
         sendEmail(user.getEmail(), subject, messageBody);
     }
 
     public void sendReservationNotification(User user, Integer bookId) throws SQLException {
-        Book book = MySqlBookDAO.getInstance().findBookById(bookId);
         String subject = resource.getString(RESERVATION_NOTIFICATION_SUBJECT);
-        String messageBody = book + "\n" + resource.getString(RESERVATION_NOTIFICATION_MESSAGE) + "\n" +
-                "Reservation duration: " + LibraryConfig.getInstance().getMaxHomeReservationDuration();
+        String messageBody = constructReservationNotificationMessage(bookId);
         sendEmail(user.getEmail(), subject, messageBody);
+    }
+
+    private String constructReservationNotificationMessage(Integer bookId) throws SQLException {
+        Book book = MySqlBookDAO.getInstance().findBookById(bookId);
+        return book + "\n" + resource.getString(RESERVATION_NOTIFICATION_MESSAGE) + "\n" +
+                "Reservation duration: " + LibraryConfig.getInstance().getMaxHomeReservationDuration() +
+                resource.getString(EMAIL_FOOTER) ;
     }
 
     public void sendOverdueNotification(BookLoan bookLoan) {
@@ -125,13 +125,14 @@ public class EmailService {
             return;
         }
         String subject = resource.getString(OVERDUE_NOTIFICATION_SUBJECT);
-        String messageBody = formOverdueNotificationMsg(bookLoan);
+        String messageBody = constructOverdueNotificationMsg(bookLoan);
         sendEmail(bookLoan.getUser().getEmail(), subject, messageBody);
     }
 
-    private String formOverdueNotificationMsg(BookLoan bookLoan) {
+    private String constructOverdueNotificationMsg(BookLoan bookLoan) {
         String messagePattern = resource.getString(OVERDUE_NOTIFICATION_MESSAGE);
-        return String.format(messagePattern, bookLoan.getUser().getFullName(), bookLoan.getBook().toString());
+        return String.format(messagePattern, bookLoan.getUser().getFullName(), bookLoan.getBook().toString())
+                + resource.getString(EMAIL_FOOTER);
     }
 
 

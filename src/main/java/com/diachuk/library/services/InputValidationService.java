@@ -1,23 +1,11 @@
 package com.diachuk.library.services;
 
-import javax.servlet.http.HttpServletRequest;
-
-import com.diachuk.library.dao.entities.Book;
-import com.diachuk.library.dao.entities.User;
-import com.diachuk.library.dao.implementations.MySql.MySqlBookDAO;
-import com.diachuk.library.dao.implementations.MySql.MySqlUserDAO;
 import com.diachuk.library.manage.LibraryConfig;
 import com.diachuk.library.manage.Message;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import com.diachuk.library.services.json.JsonResponseBuilder;
 import org.apache.commons.validator.routines.EmailValidator;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -193,7 +181,6 @@ public class InputValidationService extends JsonResponseBuilder {
      * @return Always returns {@code false}
      */
     public boolean inputInvalidVSErrorMessage(String messageBundleName) {
-        setSuccessFlag(false);
         inputValid = false;
         appendErrorMessage(Message.getInstance().getMessage(messageBundleName));
         return false;
@@ -269,4 +256,9 @@ public class InputValidationService extends JsonResponseBuilder {
         validateBookAmount(parameters.get("amountInRRoom"));
     }
 
+    public boolean validateReservationType(String reservationTypeParameter) {
+        validateNotEmpty(reservationTypeParameter);
+        return reservationTypeParameter.equals("Home") || reservationTypeParameter.equals("RRoom")
+                || inputInvalidVSErrorMessage(Message.INVALID_INPUT);
+    }
 }

@@ -35,7 +35,18 @@ body {
     margin-top: 20px;
 }
 
-
+.search-section-hovered-error{
+    background-color: rgba(255, 255, 255, 0.1);
+    height: inherit;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
 
 .search-section-hovered {
     background-color: rgba(255, 255, 255, 0.7);
@@ -102,7 +113,7 @@ body {
 }
 
 .info-header-section {
-    margin-top: 15px;
+    /*margin-top: 15px;*/
     text-align: center;
 }
 

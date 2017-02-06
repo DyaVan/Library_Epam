@@ -4,6 +4,7 @@ import com.diachuk.library.dao.entities.*;
 import com.diachuk.library.dao.implementations.MySql.*;
 import com.diachuk.library.manage.LibraryConfig;
 import com.diachuk.library.manage.Message;
+import com.diachuk.library.services.json.JsonResponseBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -21,146 +22,57 @@ public class BooksService extends JsonResponseBuilder {
 
     private static final Object MONITOR = new Object();
 
-    public Book findBookById(Integer bookId) throws SQLException {
-        if (bookId != null) {
-            Book book = MySqlBookDAO.getInstance().findBookById(bookId);
-            if (book == null) {
-
-                appendErrorMessage(Message.getInstance().getMessage(Message.BOOK_NOT_FOUND)+ "Book ID: " + bookId);
-                setSuccessFlag(false);
-            }
-            return book;
+    private IReservation addReservationDataObject(IReservation reservation) {
+        if (reservation.getType() == "Home") {
+            Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
+            addDataObject("reservation", reservation, gson);
+        } else {
+            addDataObject("reservation", reservation);
         }
-        appendErrorMessage(Message.getInstance().getMessage(Message.INVALID_INPUT) + "Book ID.");
-        setSuccessFlag(false);
-        return null;
+        return reservation;
     }
 
-    public boolean makeBookRequest(Integer bookId, User user) throws SQLException {
-        if (bookId == null || user == null) {
-            appendErrorMessage(Message.getInstance().getMessage(Message.FAILED_OPERATION));
-            setSuccessFlag(false);
-            return false;
-        }
+    private boolean errorVSErrorMessage(String messageBundleName) {
+        appendErrorMessage(Message.getInstance().getMessage(messageBundleName));
+        return false;
+    }
 
-        if (isAlreadyRequesed(bookId, user)) {
-            appendErrorMessage(Message.getInstance().getMessage(Message.ALREADY_REQUESTED));
-            setSuccessFlag(false);
-            setReloadPage(true);
-            return false;
-        }
-        synchronized (MONITOR) {
-            Book book = findBookById(bookId);
-            if (book == null) {
-                appendErrorMessage(Message.getInstance().getMessage(Message.BOOK_NOT_FOUND));
-                setSuccessFlag(false);
-                setReloadPage(true);
-                return false;
-            }
-            if (book.getAvailableForHome() == 0) {
-                if (MySqlRequestDAO.getInstance().insertRequest(book, user)) {
-                    appendSuccessMessage(Message.getInstance().getMessage(Message.BOOK_NOT_FOUND));
-                    setSuccessFlag(true);
-                    setReloadPage(true);
-                    return true;
-                } else {
-                    appendErrorMessage(Message.getInstance().getMessage(Message.UNDEFINED_ERROR));
-                    setSuccessFlag(false);
-                    return false;
-                }
-            } else {
-                appendNotificationMessage(Message.getInstance().getMessage(Message.BOOK_APPEARED));
-                setSuccessFlag(false);
-                setReloadPage(true);
-                return false;
-            }
-        }
+    private boolean errorVSMessageAndPageReload(String messageBundleName) {
+        appendErrorMessage(Message.getInstance().getMessage(messageBundleName));
+        setReloadPage(true);
+        return false;
+    }
 
+    private boolean successVSMessage(String messageBundleName) {
+        appendSuccessMessage(Message.getInstance().getMessage(messageBundleName));
+        setSuccessFlag(true);
+        return true;
+    }
+
+    private boolean successVSMessageAndPageReload(String messageBundleName) {
+        appendSuccessMessage(Message.getInstance().getMessage(messageBundleName));
+        setSuccessFlag(true);
+        setReloadPage(true);
+        return true;
     }
 
     private boolean isAlreadyRequesed(Integer bookId, User user) throws SQLException {
         return MySqlRequestDAO.getInstance().isCreatedByBookAndUser(bookId, user);
     }
 
-    public boolean makeHomeReservation(Integer bookId, User user, Integer reserveDuration) throws SQLException {
-        if (bookId == null || user == null || reserveDuration == null ||
-                reserveDuration > LibraryConfig.getInstance().getMaxHomeReservationDuration() || reserveDuration < 1) {
-            appendErrorMessage(Message.getInstance().getMessage(Message.FAILED_OPERATION));
-            setSuccessFlag(false);
-            return false;
-        }
-
-        if (isAlreadyReservedForHome(bookId, user)) {
-            appendErrorMessage(Message.getInstance().getMessage(Message.ALREADY_RESERVED));
-            setSuccessFlag(false);
-            setReloadPage(true);
-            return false;
-        }
-
-        synchronized (MONITOR) {
-            Book book = findBookById(bookId);
-            if (book == null) {
-                appendErrorMessage(Message.getInstance().getMessage(Message.FAILED_OPERATION));
-                setSuccessFlag(false);
-                return false;
-            }
-            if (book.getAvailableForHome() > 0) {
-                Date dueDate = calculateDueDate(reserveDuration);
-                return MySqlCrossTableDAO.getInstance().insertHomeReservation(book, user, dueDate);
-            } else {
-                appendErrorMessage(Message.getInstance().getMessage(Message.BOOK_DISAPPEARED));
-                setSuccessFlag(false);
-                setReloadPage(true);
-                return false;
-            }
-        }
-
+    private boolean reserveDurationCheck(Integer reserveDuration) {
+        return reserveDuration < LibraryConfig.getInstance().getMaxHomeReservationDuration() && reserveDuration >= 1
+                || errorVSErrorMessage(Message.INVALID_RESERVE_DURATION);
     }
 
-    public boolean makeRRoomReservation(Integer bookId, User user) throws SQLException {
-        if (bookId == null || user == null) {
-            appendErrorMessage(Message.getInstance().getMessage(Message.BOOK_DISAPPEARED));
-            setSuccessFlag(false);
-            return false;
-        }
-
-        if (isAlreadyReservedForRRoom(bookId, user)) {
-            appendErrorMessage(Message.getInstance().getMessage(Message.ALREADY_RESERVED));
-            setSuccessFlag(false);
-            setReloadPage(true);
-            return false;
-        }
-
-        synchronized (MONITOR) {
-            Book book = findBookById(bookId);
-            if (book == null) {
-                appendErrorMessage(Message.getInstance().getMessage(Message.FAILED_OPERATION));
-                setSuccessFlag(false);
-                return false;
-            }
-            if (book.getAvailableInRRoom() > 0) {
-                Date dueTime = calculateDueTime(LibraryConfig.getInstance().getMaxRRoomReservationDuration());
-                appendSuccessMessage(Message.getInstance().getMessage(Message.RESERVATION_SUCCEEDED));
-                setSuccessFlag(true);
-                setReloadPage(true);
-                return MySqlCrossTableDAO.getInstance().insertRRoomReservation(book, user, dueTime);
-            } else {
-                appendErrorMessage(Message.getInstance().getMessage(Message.BOOK_DISAPPEARED));
-                setSuccessFlag(false);
-                setReloadPage(true);
-                return false;
-            }
-        }
-
-
+    private boolean AlreadyReservedForHomeCheck(Integer bookId, User user) throws SQLException {
+        return !MySqlHomeReservationDAO.getInstance().isCreatedByBookAndUser(bookId, user)
+                ||  errorVSErrorMessage(Message.ALREADY_RESERVED);
     }
 
-    private boolean isAlreadyReservedForHome(Integer bookId, User user) throws SQLException {
-        return MySqlHomeReservationDAO.getInstance().isCreatedByBookAndUser(bookId, user);
-    }
-
-    private boolean isAlreadyReservedForRRoom(Integer bookId, User user) throws SQLException {
-        return MySqlRRoomReservationDAO.getInstance().isCreatedByBookAndUser(bookId, user);
+    private boolean AlreadyReservedForRRoomCheck(Integer bookId, User user) throws SQLException {
+        return !MySqlRRoomReservationDAO.getInstance().isCreatedByBookAndUser(bookId, user)
+                ||  errorVSErrorMessage(Message.ALREADY_RESERVED);
     }
 
     private Date calculateDueDate(Integer reserveDuration) {
@@ -179,182 +91,220 @@ public class BooksService extends JsonResponseBuilder {
         return cal.getTime();
     }
 
-    private boolean isAvailable(Integer bookId, String issueType) throws SQLException {
+    private boolean isAvailableCheck(Integer bookId, String issueType) throws SQLException {
         switch (issueType) {
             case HOME_ISSUE_TYPE:
                 return MySqlBookDAO.getInstance().getAvailableForHomeByBookId(bookId) > 0;
             case RROOM_ISSUE_TYPE:
                 return MySqlBookDAO.getInstance().getAvailableInRRoomByBookId(bookId) > 0;
             default:
-                return false;
+                return errorVSMessageAndPageReload(Message.BOOK_DISAPPEARED);
         }
     }
 
     private boolean excessCheck(Integer userId, Integer bookId, Integer maxAmount) throws SQLException {
-        return MySqlCrossTableDAO.getInstance().bookIssuingExcessCheck(userId, bookId, maxAmount);
+        return MySqlCrossTableDAO.getInstance().bookIssuingExcessCheck(userId, bookId, maxAmount)
+                ||  errorVSErrorMessage(Message.TOO_MUCH_BOOKS_WANTED);
     }
 
-    private boolean isAlreadyIssued(Integer bookId, Integer userId) throws SQLException {
-        return MySqlBookLoanDAO.getInstance().checkExistenceByBookVSUser(bookId, userId);
+    private boolean alreadyIssuedCheck(Integer bookId, Integer userId) throws SQLException {
+        return !MySqlBookLoanDAO.getInstance().checkExistenceByBookVSUser(bookId, userId)
+                || errorVSMessageAndPageReload(Message.ALREADY_ISSUED);
+    }
+
+    private boolean successVSIncreaseAvailableForHome(Integer bookId) throws SQLException {
+        MySqlBookDAO.getInstance().increaseAvailableForHome(bookId);
+        appendSuccessMessage(Message.getInstance().getMessage(Message.BOOKS_RETURNED_SUCCESSFULLY));
+        return true;
+    }
+
+    private Request findOldestRequest(Integer bookId) throws SQLException {
+        Request bookRequest = null;
+        for (int offset = 0; true; offset++) {
+            bookRequest = MySqlRequestDAO.getInstance().getOldestByBook(bookId, offset);
+            if (bookRequest == null || excessCheck(bookRequest.getUserId(), bookId, LibraryConfig.getInstance().getMaxBooksToGive())) {
+                break;
+            }
+        }
+        return bookRequest;
+    }
+
+    private boolean successVSEmailReservationNotification(Integer userId, Integer bookId) throws SQLException {
+        sendEmailReservationNotification(userId, bookId);
+        appendSuccessMessage(Message.getInstance().getMessage(Message.BOOKS_RETURNED_SUCCESSFULLY));
+        return true;
+    }
+
+    private boolean reserveReturnedBook(Integer bookId) throws SQLException {
+        Request bookRequest = findOldestRequest(bookId);
+        Integer reserveDuration = LibraryConfig.getInstance().getMaxDurationOfBookLoan();
+        if (bookRequest == null && MySqlCrossTableDAO.getInstance().createReservationFromRequest(bookRequest, reserveDuration)) {
+            return successVSEmailReservationNotification(bookRequest.getUserId(), bookRequest.getBookId());
+        } else {
+            appendNotificationMessage(Message.getInstance().getMessage(Message.UNDEFINED_ERROR));
+            return false;
+        }
+    }
+
+    /**
+     * Finds reservation by specified {@code reservationId} and uses it's data to fill the other parameters.
+     * Returns all nulls if reservation is not found.
+     * @param reservationId
+     * @param book Information found about reserved book will be assigned to this reference.
+     * @param userId Id of the user, who reserved the book will be assigned to this reference.
+     * @param issueType specify type of issue operation (\"Home\" or \"RRoom\")
+     * @throws SQLException
+     */
+    private void getDataFromReservation(Integer reservationId ,Book book, Integer userId, String issueType) throws SQLException {
+        MySqlBookDAO bookDAO = MySqlBookDAO.getInstance();
+
+        switch (issueType) {
+            case HOME_ISSUE_TYPE:{
+                HomeReservation homeReservation = MySqlHomeReservationDAO.getInstance().getById(reservationId);
+                if (homeReservation != null) {
+                    book = bookDAO.findBookById(homeReservation.getBookId());
+                    userId = homeReservation.getUserId();
+                    issueType = HOME_ISSUE_TYPE;
+                }
+                return;
+            }
+            case RROOM_ISSUE_TYPE:{
+                RRoomReservation rRoomReservation = MySqlRRoomReservationDAO.getInstance().getById(reservationId);
+                if (rRoomReservation != null) {
+                    book = bookDAO.findBookById(rRoomReservation.getBookId());
+                    userId = rRoomReservation.getUserId();
+                    issueType = RROOM_ISSUE_TYPE;
+                }
+                return;
+            }
+        }
+    }
+
+    public boolean returnBook(Integer bookLoanId) throws SQLException {
+        BookLoan bookLoan = MySqlBookLoanDAO.getInstance().findBookLoanById(bookLoanId);
+        if (bookLoan == null || bookLoan.getReturnDate() != null) {
+            appendErrorMessage(Message.getInstance().getMessage(Message.BOOK_LOAN_NOT_FOUND));
+            return false;
+        }
+
+        synchronized (MONITOR) {
+            MySqlBookLoanDAO.getInstance().setReturnDate(bookLoanId);
+            if (isProhibited(bookLoan.getBookId()) && !reserveReturnedBook(bookLoan.getBookId())) {
+                return successVSIncreaseAvailableForHome(bookLoan.getBookId());
+            }
+            return true;
+        }
     }
 
     public boolean isProhibited(Integer bookId) throws SQLException {
         return MySqlBannedBookDAO.getInstance().checkExistence(bookId);
     }
 
-    public boolean returnBook(Integer bookLoanId) throws SQLException {
-        Request bookRequest = null;
-        MySqlBookDAO bookDAO = MySqlBookDAO.getInstance();
-
-        BookLoan bookLoan = MySqlBookLoanDAO.getInstance().findBookLoanById(bookLoanId);
-        if (bookLoan == null || bookLoan.getReturnDate() != null) {
-            appendErrorMessage(Message.getInstance().getMessage(Message.BOOK_LOAN_NOT_FOUND));
-            setSuccessFlag(false);
+    public boolean makeHomeReservation(Integer bookId, User user, Integer reserveDuration) throws SQLException {
+        if (!reserveDurationCheck(reserveDuration)
+                || !AlreadyReservedForHomeCheck(bookId, user)
+                || !alreadyIssuedCheck(bookId, user.getId())) {
             return false;
         }
 
         synchronized (MONITOR) {
-            MySqlBookLoanDAO.getInstance().setReturnDate(bookLoanId);
-
-            if (isProhibited(bookLoan.getBookId())) {
-                MySqlBookDAO.getInstance().increaseAvailableForHome(bookLoan.getBookId());
-                appendSuccessMessage(Message.getInstance().getMessage(Message.BOOKS_RETURNED_SUCCESSFULLY));
-                setSuccessFlag(true);
-                return true;
+            Book book = findBookById(bookId);
+            if (book == null) {
+                appendErrorMessage(Message.getInstance().getMessage(Message.FAILED_OPERATION));
+                return false;
             }
 
-            boolean endOfSearch = false;
+            Date dueDate = calculateDueDate(reserveDuration);
+            if (isAvailableCheck(book.getId(),"Home")
+                    && MySqlCrossTableDAO.getInstance().insertHomeReservation(book, user, dueDate)) {
 
-            for (int offset = 1; offset > 0; offset++) {
-                bookRequest = MySqlRequestDAO.getInstance().getOldestByBook(bookLoan.getBookId(), offset);
-                if (bookRequest == null || excessCheck(bookRequest.getUserId(), bookLoan.getBookId(), LibraryConfig.getInstance().getMaxBooksToGive())) {
-                    endOfSearch = true;
-                    break;
-                }
-            }
-
-            if (bookRequest == null) {
-                MySqlBookDAO.getInstance().increaseAvailableForHome(bookLoan.getBookId());
-                appendSuccessMessage(Message.getInstance().getMessage(Message.BOOKS_RETURNED_SUCCESSFULLY));
-                setSuccessFlag(true);
-                return true;
-            }
-
-            if (MySqlCrossTableDAO.getInstance().createReservationFromRequest(bookRequest, LibraryConfig.getInstance().getMaxDurationOfBookLoan())) {
-                sendEmailReservationNotification(bookRequest.getUserId());
-                appendSuccessMessage(Message.getInstance().getMessage(Message.BOOKS_RETURNED_SUCCESSFULLY));
-                setSuccessFlag(true);
-                return true;
+                return successVSMessageAndPageReload(Message.RESERVATION_SUCCEEDED);
             } else {
-                appendNotificationMessage(Message.getInstance().getMessage(Message.UNDEFINED_ERROR));
-                appendSuccessMessage(Message.getInstance().getMessage(Message.BOOKS_RETURNED_SUCCESSFULLY));
-                setSuccessFlag(true);
-                return true;
+                return errorVSErrorMessage(Message.FAILED_OPERATION);
             }
-
         }
-
-
     }
 
-    public void sendEmailReservationNotification(Integer userId) throws SQLException {
+    public boolean makeRRoomReservation(Integer bookId, User user) throws SQLException {
+        if (!AlreadyReservedForRRoomCheck(bookId, user) || !alreadyIssuedCheck(bookId, user.getId())) {
+            return false;
+        }
+
+        synchronized (MONITOR) {
+            Book book = findBookById(bookId);
+            if (book == null) {
+                return errorVSErrorMessage(Message.FAILED_OPERATION);
+            }
+
+            Date dueTime = calculateDueTime(LibraryConfig.getInstance().getMaxRRoomReservationDuration());
+            if (isAvailableCheck(book.getId(),"RRoom")
+                    && MySqlCrossTableDAO.getInstance().insertRRoomReservation(book, user, dueTime)) {
+
+                return successVSMessageAndPageReload(Message.RESERVATION_SUCCEEDED);
+
+            } else {
+                return errorVSErrorMessage(Message.FAILED_OPERATION);
+            }
+        }
+    }
+
+    public void sendEmailReservationNotification(Integer userId, Integer bookId) throws SQLException {
         User user = MySqlUserDAO.getInstance().findById(userId);
         EmailService emailService = new EmailService();
-        emailService.sendReservationNotification(user, userId);
+        emailService.sendReservationNotification(user, bookId);
     }
 
-    public boolean issueBook(Integer reservationId) throws SQLException {
+    public boolean issueBook(Integer reservationId,String reservationType) throws SQLException {
         Book book = null;
         Integer userId = null;
-        String issueType = null;
-        MySqlBookDAO bookDAO = MySqlBookDAO.getInstance();
+        String issueType = reservationType ;
 
-        HomeReservation homeReservation = MySqlHomeReservationDAO.getInstance().getById(reservationId);
-        if (homeReservation != null) {
-            book = bookDAO.findBookById(homeReservation.getBookId());
-            userId = homeReservation.getUserId();
-            issueType = HOME_ISSUE_TYPE;
-        } else {
-            RRoomReservation rRoomReservation = MySqlRRoomReservationDAO.getInstance().getById(reservationId);
-            if (rRoomReservation != null) {
-                book = bookDAO.findBookById(rRoomReservation.getBookId());
-                userId = rRoomReservation.getUserId();
-                issueType = RROOM_ISSUE_TYPE;
-            }
-        }
+        getDataFromReservation(reservationId, book, userId, issueType);
 
         if (book == null) {
-            appendErrorMessage(Message.getInstance().getMessage(Message.FAILED_OPERATION));
-            setSuccessFlag(false);
-            return false;
+            return errorVSErrorMessage(Message.FAILED_OPERATION);
         }
 
         synchronized (MONITOR) {
-            if (!isAlreadyIssued(book.getId(), userId)) {
-                appendErrorMessage(Message.getInstance().getMessage(Message.ALREADY_ISSUED));
-                setSuccessFlag(false);
-                setReloadPage(true);
-                return false;
-            }
-
             if (isProhibited(book.getId())) {
-                appendErrorMessage(Message.getInstance().getMessage(Message.PROHIBITED_BOOK));
-                setSuccessFlag(false);
-                setReloadPage(true);
-                return false;
+                return errorVSMessageAndPageReload(Message.PROHIBITED_BOOK);
             }
 
-            if (!excessCheck(userId, book.getId(), LibraryConfig.getInstance().getMaxBooksToGive())) {
-                appendErrorMessage(Message.getInstance().getMessage(Message.TOO_MUCH_BOOKS_WANTED));
-                setSuccessFlag(false);
-                return false;
-            }
-
-            if (!isAvailable(book.getId(), issueType)) {
-                appendNotificationMessage(Message.getInstance().getMessage(Message.BOOK_DISAPPEARED));
-                setSuccessFlag(false);
-                setReloadPage(true);
-                return false;
-            }
-
-            if (MySqlCrossTableDAO.getInstance().createBookLoanFromReservation(reservationId, book.getId(), userId,
+            if (alreadyIssuedCheck(book.getId(), userId)
+                    && excessCheck(userId, book.getId(), LibraryConfig.getInstance().getMaxBooksToGive())
+                    && isAvailableCheck(book.getId(), issueType)
+                    && MySqlCrossTableDAO.getInstance().createBookLoanFromReservation(reservationId, book.getId(), userId,
                     issueType, LibraryConfig.getInstance().getMaxDurationOfBookLoan())) {
-                return true;
+
+                return successVSMessage(Message.SUCCESSFULL_OPERATION);
             }
-
-            appendErrorMessage(Message.getInstance().getMessage(Message.FAILED_OPERATION));
-            setSuccessFlag(false);
-            return false;
+            return errorVSErrorMessage(Message.FAILED_OPERATION);
         }
-
     }
 
     public BookLoan findBookLoanVSUser(Integer bookLoanId) throws SQLException {
         BookLoan bookLoan = MySqlCrossTableDAO.getInstance().findBookLoanVSUser(bookLoanId);
         if (bookLoan == null) {
-            setSuccessFlag(false);
             appendErrorMessage(Message.getInstance().getMessage(Message.FAILED_OPERATION));
-        }else {
+        } else {
             Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
-            addDataObject("bookLoan", bookLoan,gson);
+            addDataObject("bookLoan", bookLoan, gson);
         }
         return bookLoan;
     }
 
-    public IReservation findReservationVSUser(Integer reservationId) throws SQLException {
-        IReservation reservation = MySqlCrossTableDAO.getInstance().findReservationVSUser(reservationId);
-        if (reservation == null) {
-            setSuccessFlag(false);
-            appendErrorMessage(Message.getInstance().getMessage(Message.FAILED_OPERATION));
-        }else {
-            if (reservation.getType() == "Home") {
-                Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
-                addDataObject("reservation", reservation, gson);
-            } else {
-                addDataObject("reservation", reservation);
+    public IReservation findReservationVSUser(Integer reservationId,String reservationType) throws SQLException {
+        IReservation reservation = null;
+        switch (reservationType) {
+            case HOME_ISSUE_TYPE:{
+                reservation = MySqlHomeReservationDAO.getInstance().getById(reservationId);
+                break;
+            }
+            case RROOM_ISSUE_TYPE:{
+                reservation = MySqlRRoomReservationDAO.getInstance().getById(reservationId);
             }
         }
-        return reservation;
+        return reservation != null ? addReservationDataObject(reservation) : null;
     }
 
     public boolean addBook(String bookName, String author, Integer year, String genre, String description,
@@ -364,11 +314,40 @@ public class BooksService extends JsonResponseBuilder {
             return true;
         }
         appendErrorMessage(Message.getInstance().getMessage(Message.FAILED_OPERATION));
-        setSuccessFlag(false);
         return false;
     }
 
     public Integer findBookIdByNameAuthorYear(String bookName, String author, Integer year) throws SQLException {
         return MySqlBookDAO.getInstance().findBookIdByNameAuthorYear(bookName, author, year);
+    }
+
+    public Book findBookById(Integer bookId) throws SQLException {
+        Book book = MySqlBookDAO.getInstance().findBookById(bookId);
+        if (book == null) {
+            appendErrorMessage(Message.getInstance().getMessage(Message.BOOK_NOT_FOUND) + "Book ID: " + bookId);
+            setSuccessFlag(false);
+        }
+        return book;
+    }
+
+    public boolean makeBookRequest(Integer bookId, User user) throws SQLException {
+        if (bookId == null || user == null) {
+            return errorVSErrorMessage(Message.FAILED_OPERATION);
+        }
+
+        if (isAlreadyRequesed(bookId, user)) {
+            return errorVSErrorMessage(Message.ALREADY_REQUESTED);
+        }
+        synchronized (MONITOR) {
+            Book book = findBookById(bookId);
+            if (book != null
+                    && book.getAvailableForHome() == 0
+                    && MySqlRequestDAO.getInstance().insertRequest(book, user)) {
+
+                return successVSMessageAndPageReload(Message.SUCCESSFULL_OPERATION);
+            } else {
+                return errorVSMessageAndPageReload(Message.UNDEFINED_ERROR);
+            }
+        }
     }
 }

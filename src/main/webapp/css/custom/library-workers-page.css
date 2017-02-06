@@ -103,6 +103,11 @@ body {
   margin-bottom: 10px;
 }
 
+.book-logo-edit {
+    width: 210px;
+    height: 280px;
+}
+
 .book-description-item{
   margin-bottom: 10px;
 }

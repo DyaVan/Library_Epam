@@ -1,6 +1,7 @@
 package com.diachuk.library.services;
 
 import com.diachuk.library.dao.entities.User;
+import com.diachuk.library.dao.implementations.MySql.MySqlRoleDAO;
 import com.diachuk.library.manage.Message;
 import com.diachuk.library.manage.NavigationManager;
 
@@ -55,6 +56,8 @@ public class SessionManagerService {
     public void startNewSession(User user) throws SQLException {
         session = request.getSession();
         session.setAttribute("currentUser", user);
-        session.setAttribute("accessLevel", LibraryService.getAccessLevel(user.getRoleId()));
+        Integer accessLevel = MySqlRoleDAO.getInstance().getAccessLevel(user.getRoleId());
+        session.setAttribute("accessLevel", accessLevel);
     }
+
 }
