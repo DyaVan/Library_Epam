@@ -29,13 +29,14 @@ public class SessionFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
         CommandWrapper commandWrapper = ControllerHelper.getCommandWrapper(httpRequest);
         SessionManagerService sessionManagerService = new SessionManagerService(httpRequest);
-
-        if (sessionManagerService.checkAccessRights(commandWrapper.getAccessLevel())) {
-            filterChain.doFilter(servletRequest, servletResponse);
-        }else {
-            RequestDispatcher dispatcher = servletRequest.getServletContext().getRequestDispatcher(
-                    NavigationManager.getInstance().getPage(NavigationManager.LOGIN_PAGE));
-            dispatcher.forward(servletRequest,servletResponse);
+        if (commandWrapper != null) {
+            if (sessionManagerService.checkAccessRights(commandWrapper.getAccessLevel())) {
+                filterChain.doFilter(servletRequest, servletResponse);
+            } else {
+                RequestDispatcher dispatcher = servletRequest.getServletContext().getRequestDispatcher(
+                        NavigationManager.getInstance().getPage(NavigationManager.LOGIN_PAGE));
+                dispatcher.forward(servletRequest, servletResponse);
+            }
         }
     }
 

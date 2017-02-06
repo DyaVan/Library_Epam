@@ -80,6 +80,14 @@ public class MySqlBookDAO implements IBookDAO {
         return books;
     }
 
+    private Integer controllOffsetValue(Integer offset) {
+        return (offset == null || offset < 0) ? 0 : offset;
+    }
+
+    private String limitInsertion(Integer validOffset) {
+        return String.format(" LIMIT %1d , 10", validOffset * 10);
+    }
+
     public ArrayList<Book> findBySearchLineFullText(String searchLine, String genreFilter, Integer offset) throws SQLException {
         ArrayList<Book> books = new ArrayList<>();
 
@@ -87,36 +95,43 @@ public class MySqlBookDAO implements IBookDAO {
             return books;
         }
 
-        Integer validOffset = offset;
-        if (validOffset == null || validOffset < 0) {
-            validOffset = 0;
-        }
+        Integer validOffset = controllOffsetValue(offset);
 
-        try (Connection connection = MySqlDAOFactory.createConnection()) {
+        try (Connection connection = MySqlDAOFactory.createConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT book.id, book.name, book.author, " +
+                     "book.genre, book.year, book.amountForHome, book.availableForHome, book.amountInRRoom, " +
+                     "book.availableInRRoom, book.readersRate, book.numberOfVotes, vote.mark " +
+                     "FROM book LEFT JOIN vote ON (book.id = vote.bookId) WHERE MATCH(name, author) " +
+                     "AGAINST (?)  AND genre LIKE ? " + limitInsertion(validOffset))) {
 
-            StringBuilder query = new StringBuilder("SELECT book.id, book.name, book.author, book.genre, book.year, book.amountForHome, " +
-                    "book.availableForHome, book.amountInRRoom, book.availableInRRoom, book.readersRate, " +
-                    "book.numberOfVotes, vote.mark " +
-                    "FROM book " +
-                    "LEFT JOIN vote ON (book.id = vote.bookId) WHERE ( MATCH(name, author) AGAINST ");
+            preparedStatement.setString(1, searchLine);
+            preparedStatement.setString(2,"%" + genreFilter + "%");
 
+//            StringBuilder query = new StringBuilder("SELECT book.id, book.name, book.author, book.genre, book.year, book.amountForHome, " +
+//                    "book.availableForHome, book.amountInRRoom, book.availableInRRoom, book.readersRate, " +
+//                    "book.numberOfVotes, vote.mark " +
+//                    "FROM book " +
+//                    "LEFT JOIN vote ON (book.id = vote.bookId) WHERE ( MATCH(name, author) AGAINST ");
+//
+//
+//            query.append(" (\"" + searchLine + "\")) ");
+//
+//            if (genreFilter != null && !genreFilter.isEmpty()) {
+//                query.append(String.format("AND genre = \"%1s\" ", genreFilter));
+//            }
+//            query.append(String.format(" LIMIT %1d , 10", validOffset * 10));
+//
+//            Statement stm = connection.createStatement();
+//            ResultSet rs = stm.executeQuery(query.toString());
 
-            query.append(" (\"" + searchLine + "\")) ");
-
-            if (genreFilter != null && !genreFilter.isEmpty()) {
-                query.append(String.format("AND genre = \"%1s\" ", genreFilter));
-            }
-            query.append(String.format(" LIMIT %1d , 10", validOffset * 10));
-
-            Statement stm = connection.createStatement();
-            ResultSet rs = stm.executeQuery(query.toString());
+            ResultSet rs = preparedStatement.executeQuery();
 
             while (rs.next()) {
                 Book book = shortFill_BookFromResultSet(rs);
                 books.add(book);
             }
 
-            stm.close();
+//            stm.close();
 
         }
         return books;

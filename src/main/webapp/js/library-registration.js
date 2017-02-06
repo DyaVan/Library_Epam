@@ -1,15 +1,16 @@
 (function ($) {
 
+
     var readyFunc = function () {
         $("#register-form").submit(function (event) {
             event.preventDefault();
             event.stopPropagation();
 
-            var command = $("#register-form").attr("data-command");
+            command = $("#btn-logIn").attr("data-command");
             var url = "Library?command=" + command;
 
 
-            $.post(url, $("#register-form").serialize())
+            $.post(url, $("#logIn-form").serialize())
                 .done(function (data, status, xhr) {
                     var ct = xhr.getResponseHeader('Content-Type');
                     if (ct.indexOf("json") > -1) {
@@ -31,6 +32,7 @@
         });
 
     };
+
 
     $(document).ready(readyFunc);
 

@@ -8,6 +8,7 @@ import com.diachuk.library.services.UserService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by VA-N_ on 25.01.2017.
@@ -26,13 +28,21 @@ public class CommandGetUserCurrents implements ICommand {
         User currentUser = sessionService.getCurrentUser();
 
         UserService userService = new UserService();
-        ArrayList<IReservation> userCurrentReservations = userService.getUserCurrentReservations(currentUser);
-        ArrayList<Request> userCurrentRequests = userService.getUserCurrentRequests(currentUser);
-        ArrayList<BookLoan> userCurrentBookLoans = userService.getUserCurrentBookLoans(currentUser);
+        List<IReservation> reservations = userService.getUserCurrentReservations(currentUser);
+        List<Request> requests = userService.getUserCurrentRequests(currentUser);
+        List<BookLoan> bookLoans = userService.getUserCurrentBookLoans(currentUser);
 
-        String jsonResponse = userService.buildJsonResponse().extractJsonString();
+        request.setAttribute("reservations",reservations);
+        request.setAttribute("requests",requests);
+        request.setAttribute("bookLoans",bookLoans);
 
-        LibraryServlet.sendJsonResponse(jsonResponse,response);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/VERY_FAAST/currents.jsp");
+        dispatcher.forward(request, response);
+
+
+//        String jsonResponse = userService.buildJsonResponse().extractJsonString();
+//
+//        LibraryServlet.sendJsonResponse(jsonResponse,response);
     }
 
     public static void main(String[] args) {
