@@ -64,6 +64,7 @@ public class MySqlCrossTableDAO implements ICrossTableDAO {
         if (connection == null) {
             return false;
         }
+
         try (PreparedStatement decreaseAvailableStm = connection.prepareStatement("UPDATE book SET availableInRRoom = (availableInRRoom - 1) WHERE id = ?");
                 PreparedStatement insertBookLoanStm = connection.prepareStatement(
                         "INSERT INTO bookloan (userId, bookId, type, tookDate, dueDate) " +
