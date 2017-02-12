@@ -6,6 +6,8 @@ import com.diachuk.library.dao.implementations.MySql.MySqlQuestionDAO;
 import com.diachuk.library.dao.implementations.MySql.MySqlUserDAO;
 import com.diachuk.library.manage.Message;
 import com.diachuk.library.services.json.JsonResponseBuilder;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.commons.validator.routines.EmailValidator;
 
 import java.sql.SQLException;
@@ -94,14 +96,14 @@ public class UserService extends JsonResponseBuilder {
 
     public ArrayList<BookLoan> getUserCurrentBookLoans(User currentUser) throws SQLException {
         ArrayList<BookLoan> userCurrentBookLoans = new ArrayList<>();
+        Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
         if (currentUser == null) {
             setSuccessFlag(false);
             setReloadPage(true);
-            addDataObject("userCurrentBookLoans", userCurrentBookLoans);
-            return userCurrentBookLoans;
+        }else {
+            userCurrentBookLoans = MySqlCrossTableDAO.getInstance().getUserCurrentBookLoans(currentUser.getId());
         }
-        userCurrentBookLoans = MySqlCrossTableDAO.getInstance().getUserCurrentBookLoans(currentUser.getId());
-        addDataObject("userCurrentBookLoans", userCurrentBookLoans);
+        addDataObject("userCurrentBookLoans", userCurrentBookLoans, gson);
         return userCurrentBookLoans;
     }
 

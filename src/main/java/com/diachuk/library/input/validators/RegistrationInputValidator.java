@@ -14,9 +14,9 @@ public class RegistrationInputValidator extends InputValidator {
         String passwordParameter = request.getParameter("password");
 
         inputValidationService.validateName(nameParameter);
-        inputValidationService.validateSurname(nameParameter);
-        inputValidationService.validateNewEmail(nameParameter);
-        inputValidationService.validateNewPassword(nameParameter);
+        inputValidationService.validateSurname(surnameParameter);
+        inputValidationService.validateNewEmail(emailParameter);
+        inputValidationService.validateNewPassword(passwordParameter);
 
         if (inputValidationService.isInputValid()) {
             return true;

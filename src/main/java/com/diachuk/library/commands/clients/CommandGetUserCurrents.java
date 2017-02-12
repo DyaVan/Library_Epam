@@ -32,17 +32,9 @@ public class CommandGetUserCurrents implements ICommand {
         List<Request> requests = userService.getUserCurrentRequests(currentUser);
         List<BookLoan> bookLoans = userService.getUserCurrentBookLoans(currentUser);
 
-        request.setAttribute("reservations",reservations);
-        request.setAttribute("requests",requests);
-        request.setAttribute("bookLoans",bookLoans);
+        String jsonResponse = userService.buildJsonResponse().extractJsonString();
 
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/VERY_FAAST/currents.jsp");
-        dispatcher.forward(request, response);
-
-
-//        String jsonResponse = userService.buildJsonResponse().extractJsonString();
-//
-//        LibraryServlet.sendJsonResponse(jsonResponse,response);
+        LibraryServlet.sendJsonResponse(jsonResponse,response);
     }
 
     public static void main(String[] args) {

@@ -77,11 +77,6 @@
 
     <div class="row name-section">
         <h4>Library</h4>
-
-        <a href="/VERY_FAST/menu.jsp">
-            <button type="button" name="button">Menu</button>
-        </a>
-
     </div>
 </div>
 

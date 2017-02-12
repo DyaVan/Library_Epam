@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.DAYS;
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -112,19 +111,19 @@ public class BackgroundService {
     };
 
     public void RestartBackgroundProcesses() {
-        StopBackgroundProcesses();
-        StartBackgroundProcesses();
+        stopBackgroundProcesses();
+        startBackgroundProcesses();
         runningStatus = true;
     }
 
-    public void StopBackgroundProcesses() {
+    public void stopBackgroundProcesses() {
         for (ScheduledFuture<?> task : backgroundTasks) {
             task.cancel(false);
         }
         runningStatus = false;
     }
 
-    public void StartBackgroundProcesses() {
+    public void startBackgroundProcesses() {
         if (!runningStatus) {
             assignBackgroundTasks();
             runningStatus = true;

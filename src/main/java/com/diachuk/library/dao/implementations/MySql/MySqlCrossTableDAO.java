@@ -204,20 +204,20 @@ public class MySqlCrossTableDAO implements ICrossTableDAO {
                 homeReservation.setBookId(homeReservationRs.getInt(MySqlHomeReservationDAO.BOOK_ID_COLUMN));
                 homeReservation.setDueTo(homeReservationRs.getDate(MySqlHomeReservationDAO.DUE_DATE_COLUMN));
                 Book book = new Book();
-                book.setName(MySqlBookDAO.NAME_COLUMN);
-                book.setAuthor(MySqlBookDAO.AUTHOR_COLUMN);
+                book.setName(homeReservationRs.getString(MySqlBookDAO.NAME_COLUMN));
+                book.setAuthor(homeReservationRs.getString(MySqlBookDAO.AUTHOR_COLUMN));
                 homeReservation.setBook(book);
                 currentReservaations.add(homeReservation);
             }
 
             while (rRoomReservationsRs.next()) {
                 RRoomReservation rRoomReservation = new RRoomReservation();
-                rRoomReservation.setId(homeReservationRs.getInt(MySqlRRoomReservationDAO.ID_COLUMN));
-                rRoomReservation.setBookId(homeReservationRs.getInt(MySqlRRoomReservationDAO.BOOK_ID_COLUMN));
-                rRoomReservation.setDueTo(homeReservationRs.getDate(MySqlRRoomReservationDAO.DUE_TIME_COLUMN));
+                rRoomReservation.setId(rRoomReservationsRs.getInt(MySqlRRoomReservationDAO.ID_COLUMN));
+                rRoomReservation.setBookId(rRoomReservationsRs.getInt(MySqlRRoomReservationDAO.BOOK_ID_COLUMN));
+                rRoomReservation.setDueTo(rRoomReservationsRs.getDate(MySqlRRoomReservationDAO.DUE_TIME_COLUMN));
                 Book book = new Book();
-                book.setName(MySqlBookDAO.NAME_COLUMN);
-                book.setAuthor(MySqlBookDAO.AUTHOR_COLUMN);
+                book.setName(homeReservationRs.getString(MySqlBookDAO.NAME_COLUMN));
+                book.setAuthor(homeReservationRs.getString(MySqlBookDAO.AUTHOR_COLUMN));
                 rRoomReservation.setBook(book);
                 currentReservaations.add(rRoomReservation);
             }
@@ -233,8 +233,8 @@ public class MySqlCrossTableDAO implements ICrossTableDAO {
 
         try (Connection connection = MySqlDAOFactory.createConnection();
              PreparedStatement stm = connection.prepareStatement(
-                     "SELECT request.id, request.bookId, request.requestDate book.name, book.author " +
-                             "FROM bookloan JOIN book ON (bookloan.bookId = book.id) WHERE request.userId = ?")) {
+                     "SELECT request.id, request.bookId, request.requestDate, book.name, book.author " +
+                             "FROM request JOIN book ON (request.bookId = book.id) WHERE request.userId = ?")) {
 
             stm.setInt(1, userId);
 
@@ -247,6 +247,7 @@ public class MySqlCrossTableDAO implements ICrossTableDAO {
                 Book book = new Book();
                 book.setName(rs.getString(MySqlBookDAO.NAME_COLUMN));
                 book.setAuthor(rs.getString(MySqlBookDAO.AUTHOR_COLUMN));
+                request.setBook(book);
                 currentRequests.add(request);
             }
 

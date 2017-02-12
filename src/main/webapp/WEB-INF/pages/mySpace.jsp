@@ -17,7 +17,9 @@
     <script src="js\jquery-3.1.1.min.js"></script>
     <script src="js\bootstrap.min.js"></script>
     <script src="js\myspace\library-my-space.js"></script>
+    <script src="js\myspace\mySpace-currents.js"></script>
     <script src="js\messages.js"></script>
+
 
 </head>
 
@@ -33,7 +35,7 @@
 
         <ul class="nav nav-stacked nav-tab-custom col-md-2 col-xs-12">
             <li class="active"><a data-toggle="tab" href="#my-history-tab">My history</a></li>
-            <li><a data-toggle="tab" href="#current-tab">Current</a></li>
+            <li><a id="current-tab-btn" data-toggle="tab" href="#current-tab">Current</a></li>
             <li><a data-toggle="tab" href="#my-questions-tab">My questions</a></li>
             <li><a data-toggle="tab" href="#ask-question-tab">Ask question</a></li>
             <li><a data-toggle="tab" href="#book-read-tab">Book read</a></li>
@@ -102,9 +104,26 @@
             </div>
 
             <div id="current-tab" class="tab-pane fade">
-                <h4>CURRENT</h4>
+                <h4>Requests</h4>
                 <div class="table-responsive">
-                    <table class="table table-hover table-bordered table-striped">
+                    <table id="current-table" class="table table-hover table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            <td>Action</td>
+                            <td>ID</td>
+                            <td>Book Id</td>
+                            <td>Book name</td>
+                            <td>Author</td>
+                            <td>Request date</td>
+                            <td></td>
+                        </tr>
+                        </thead>
+                        <tbody id="current-requests-table-body">
+                        </tbody>
+                    </table>
+
+                    <h4>Reservations</h4>
+                    <table id="Reservations-table" class="table table-hover table-bordered table-striped">
                         <thead>
                         <tr>
                             <td>Action</td>
@@ -113,55 +132,29 @@
                             <td>Book Id</td>
                             <td>Book name</td>
                             <td>Author</td>
-                            <td>Took date</td>
-                            <td>... date</td>
-                            <td>Return date</td>
+                            <td>Rservation date</td>
                             <td></td>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="Reservations-table-body">
+                        </tbody>
+                    </table>
+
+                    <h4>Book loans</h4>
+                    <table id="BookLoans-table" class="table table-hover table-bordered table-striped">
+                        <thead>
                         <tr>
-                            <td>Max</td>
-                            <td>Calambur</td>
-                            <td>12345</td>
-                            <td>78954</td>
-                            <td>Kak ubitsa</td>
-                            <td>Max</td>
-                            <td>45/45//87955</td>
-                            <td>465</td>
-                            <td>12/45/2222154</td>
-                            <td>
-                                <button class="btn btn-default" name="button">Cancel</button>
-                            </td>
+                            <td>Action</td>
+                            <td>Type</td>
+                            <td>ID</td>
+                            <td>Book Id</td>
+                            <td>Book name</td>
+                            <td>Author</td>
+                            <td>took date</td>
+                            <td>due date</td>
                         </tr>
-                        <tr>
-                            <td>Max</td>
-                            <td>Calambur</td>
-                            <td>12345</td>
-                            <td>78954</td>
-                            <td>Kak ubitsa</td>
-                            <td>Max</td>
-                            <td>45/45//87955</td>
-                            <td>465</td>
-                            <td>12/45/2222154</td>
-                            <td>
-                                <button class="btn btn-default" name="button">Cancel</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Max</td>
-                            <td>Calambur</td>
-                            <td>12345</td>
-                            <td>78954</td>
-                            <td>Kak ubitsa</td>
-                            <td>Max</td>
-                            <td>45/45//87955</td>
-                            <td>465</td>
-                            <td>12/45/2222154</td>
-                            <td>
-                                <button class="btn btn-default" name="button">Cancel</button>
-                            </td>
-                        </tr>
+                        </thead>
+                        <tbody id="BookLoans-table-body">
                         </tbody>
                     </table>
                 </div>

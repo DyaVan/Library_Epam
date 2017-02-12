@@ -6,11 +6,11 @@
             event.preventDefault();
             event.stopPropagation();
 
-            command = $("#btn-logIn").attr("data-command");
+            command = $("#btn-register").attr("data-command");
             var url = "Library?command=" + command;
 
 
-            $.post(url, $("#logIn-form").serialize())
+            $.post(url, $("#register-form").serialize())
                 .done(function (data, status, xhr) {
                     var ct = xhr.getResponseHeader('Content-Type');
                     if (ct.indexOf("json") > -1) {

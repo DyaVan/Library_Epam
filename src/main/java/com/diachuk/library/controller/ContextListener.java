@@ -14,12 +14,11 @@ public class ContextListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         LibraryConfig.getInstance().fillCommandsMapping();
         LibraryConfig.getInstance().refreshLibraryConfig();
-        BackgroundService.getInstance().StartBackgroundProcesses();
+        BackgroundService.getInstance().startBackgroundProcesses();
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        System.out.println("dasd");
         BackgroundService.getInstance().shutdown();
     }
 }
