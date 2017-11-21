@@ -19,8 +19,8 @@ public class BookImageTag extends TagSupport {
 
     @Override
     public int doStartTag() throws JspException {
-        try {
-            String imageHtml = "<img id=\"book-img\" class=\"book-logo book-logo-edit\" src=\"\\bookImages\\" +
+        try {//book-logo book-logo-edit
+            String imageHtml = "<img id=\"book-img\" class=\"img-responsive\" src=\"\\bookImages\\" +
                     bookId +".jpg\" alt=\"Book image\">";
             pageContext.getOut().print(imageHtml);
         } catch(IOException ioException) {

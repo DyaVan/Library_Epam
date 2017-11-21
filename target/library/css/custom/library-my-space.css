@@ -1,0 +1,145 @@
+@font-face {
+    font-family: Roboto;
+    src: url("../../fonts/Roboto/Roboto-Regular.ttf");
+}
+
+@font-face {
+    font-family: Roboto Bold;
+    src: url("../../fonts/Roboto/Roboto-Bold.ttf");
+}
+
+body {
+    background-color: #D5DEE3
+}
+
+* {
+    font-family: "Roboto";
+}
+
+h5, p {
+  display: inline-block;;
+}
+
+
+.btn-group .btn {
+  width: 50%;
+}
+
+.btn {
+    width: 100%;
+}
+
+.navbar-custom {
+    background-color: #75625E;
+    color: #ffffff;
+    border-radius: 0;
+}
+
+.navbar-custom .navbar-nav>li>a {
+    color: #fff;
+}
+
+.navbar-custom .navbar-toggle {
+    background-color: #F0DEDC;
+}
+
+.navbar-custom .icon-bar {
+    background-color: #75625E;
+}
+
+.nav-tab-custom .active a, .nav-tab-custom .active a:hover, .nav-tab-custom .active a:active, .nav-tab-custom .active a:focus {
+    background-color: #7F9AA5;
+    border-radius: 3px;
+    font-size: 16px;
+    color: white;
+}
+
+.nav-tab-custom li a:hover {
+    border-radius: 3px;
+    background-color: #AFCDD8;
+}
+
+.nav-tab-custom li a {
+    color: #2E2940;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.container {
+    margin-top: 60px;
+}
+
+.header-link {
+    display: block;
+    line-height: 38px;
+    color: white;
+    font-family: "Roboto Bold";
+    margin: 5px 2px;
+    text-align: center;
+    border-radius: 3px;
+}
+
+.header-link:hover {
+    text-decoration: none;
+    background-color: white;
+    background-color: rgba(255, 255, 255, 0.6);
+    color: #75625E;
+}
+
+.header-link:focus {
+    color: white;
+    text-decoration: none;
+}
+
+.block {
+    background-color: white;
+    border-radius: 5px;
+    padding-bottom: 20px;
+    padding-top: 20px;
+}
+
+.asked-question {
+  margin: 10px;
+  background-color: #F9F9F9;
+  border-radius: 2px;
+  border: 1px solid #E9D7D5;
+  padding: 10px;
+}
+
+.asked-question .question-text {
+  margin: 15px 15px;
+  text-align: justify;
+}
+
+.configure-profile-section input {
+  margin: 10px 0;
+}
+
+hr {
+    display: none;
+}
+
+table>thead {
+    font-weight: 600;
+}
+
+@media (max-width:990px) {
+    .btn {
+        margin-top: 10px;
+    }
+}
+
+@media (max-width:768px) {
+    hr {
+      margin-top: 15px;
+        display: block;
+        background-color: #627782;
+        border-top: 7px solid #627782;
+        width: 100%;
+    }
+    .nav-stacked>li {
+        float: left;
+        margin: 0 5px;
+        margin-bottom: 10px;
+    }
+}

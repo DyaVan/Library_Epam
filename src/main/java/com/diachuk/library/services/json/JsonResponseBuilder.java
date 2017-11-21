@@ -17,7 +17,8 @@ public abstract class JsonResponseBuilder {
     private JsonObject dataRoot = new JsonObject();
 
     public JsonResponse buildJsonResponse() {
-        return new JsonResponse(successFlag, reloadPage, errorMessage.toString(), notificationMessage.toString(),
+        return new JsonResponse(successFlag, reloadPage, errorMessage.toString(),
+                notificationMessage.toString(),
                 successMessage.toString(), dataRoot);
     }
 

@@ -1,0 +1,70 @@
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+        "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+
+    <display-name>Archetype Created Web Application</display-name>
+
+    <!--******************************** CONTEXT ********************************-->
+
+    <context-param>
+        <param-name>file-upload</param-name>
+        <param-value>\bookImages\</param-value>
+    </context-param>
+
+    <!--******************************** SERVLET ********************************-->
+
+    <servlet>
+        <servlet-name>MainLibraryServlet</servlet-name>
+        <servlet-class>com.diachuk.library.controller.LibraryServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>MainLibraryServlet</servlet-name>
+        <url-pattern>/Library</url-pattern>
+        <url-pattern>/LibrarySecure</url-pattern>
+    </servlet-mapping>
+
+
+    <!--******************************** LISTENERS ********************************-->
+
+    <listener>
+        <listener-class>com.diachuk.library.controller.ContextListener</listener-class>
+    </listener>
+
+
+    <!--******************************** SESSION ********************************-->
+
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+
+
+    <!--******************************** FILTERS ********************************-->
+
+    <filter>
+        <filter-name>SessionFilter</filter-name>
+        <filter-class>com.diachuk.library.filters.SessionFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>SessionFilter</filter-name>
+        <url-pattern>/Library</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>InputFilter</filter-name>
+        <filter-class>com.diachuk.library.filters.InputFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>InputFilter</filter-name>
+        <url-pattern>/Library</url-pattern>
+    </filter-mapping>
+
+
+
+</web-app>

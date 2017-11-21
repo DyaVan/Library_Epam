@@ -1,0 +1,29 @@
+@font-face {
+    font-family: Roboto;
+    src: url("../../fonts/Roboto/Roboto-Regular.ttf");
+}
+
+@font-face {
+    font-family: Roboto Bold;
+    src: url("../../fonts/Roboto/Roboto-Bold.ttf");
+}
+
+.login-section {
+    margin-top: 100px;
+}
+
+.login-section input,
+.login-section .btn {
+    width: 100%;
+    margin: 5px 0;
+}
+
+body {
+    background-color: #E2DCC5
+}
+
+* {
+    font-family: "Roboto";
+}
+
+

@@ -1,0 +1,146 @@
+@font-face {
+    font-family: Roboto;
+    src: url("../../fonts/Roboto/Roboto-Regular.ttf");
+}
+
+@font-face {
+    font-family: Roboto Bold;
+    src: url("../../fonts/Roboto/Roboto-Bold.ttf");
+}
+
+body {
+    background-color: #D5DEE3
+}
+
+/** {*/
+    /*font-family: "Roboto";*/
+/*}*/
+
+.btn {
+    width: 100%;
+}
+
+
+.nav-tab-custom .active a,
+.nav-tab-custom .active a:hover,
+.nav-tab-custom .active a:active,
+.nav-tab-custom .active a:focus{
+    background-color: #7F9AA5;
+    border-radius: 3px;
+    font-size: 16px;
+    color: white;
+}
+
+.nav-tab-custom li a:hover {
+    border-radius: 3px;
+    background-color: #AFCDD8;
+}
+
+.nav-tab-custom li a {
+    color: #2E2940;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.container {
+    margin-top: 60px;
+}
+
+.header-link {
+    display: block;
+    line-height: 38px;
+    color: white;
+    font-family: "Roboto Bold";
+    margin: 5px 2px;
+    text-align: center;
+    border-radius: 3px;
+}
+
+.header-link:hover {
+    text-decoration: none;
+    background-color: white;
+    background-color: rgba(255, 255, 255, 0.6);
+    color: #75625E;
+}
+
+.header-link:focus {
+    color: white;
+    text-decoration: none;
+}
+
+.block {
+    background-color: white;
+    border-radius: 5px;
+    padding-bottom: 20px;
+}
+
+.history-search-section {
+  border-bottom: 1px dashed #FBE8E4;
+  padding-bottom: 5px;
+}
+
+.history-section table {
+  margin-top: 15px;
+}
+
+.block-tem {
+  background-color: #F5FEFF;
+  border: 2px solid #F0F9FA;
+  border-radius: 3px;
+  padding: 5px;
+}
+
+.block-tem p,.block-tem strong,.block-tem input {
+  display: inline-block;
+  line-height: 28px;
+}
+
+.block-tem input {
+  width: 50%;
+}
+
+.btn-add-book {
+  margin-bottom: 10px;
+}
+
+.book-logo-edit {
+    width: 210px;
+    height: 280px;
+}
+
+.book-description-item{
+  margin-bottom: 10px;
+}
+
+.btn-group {
+  width: 100%;
+}
+
+.btn-group .btn {
+  width: 50%;
+}
+
+.book-description-area {
+  width: 100%;
+}
+
+#book-editor-section{
+  display: none;
+}
+
+#btn-group-role {
+  display: none;
+}
+
+@media (max-width:990px) {
+    .btn {
+        margin-top: 10px;
+    }
+}
+
+/*---------------------*/
+.measured-block {
+    border-bottom: 2px dashed #FBE8E4;
+    padding-bottom: 8px;
+    padding-top: 8px;
+}
