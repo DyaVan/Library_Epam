@@ -4,6 +4,7 @@ import com.diachuk.library.dao.entities.*;
 import com.diachuk.library.dao.implementations.MySql.MySqlCrossTableDAO;
 import com.diachuk.library.dao.implementations.MySql.MySqlQuestionDAO;
 import com.diachuk.library.dao.implementations.MySql.MySqlUserDAO;
+import com.diachuk.library.dao.interfaces.IUserDAO;
 import com.diachuk.library.manage.Message;
 import com.diachuk.library.services.json.JsonResponseBuilder;
 import com.google.gson.Gson;
@@ -18,8 +19,14 @@ import java.util.ArrayList;
  */
 public class UserService extends JsonResponseBuilder {
 
+    public UserService(IUserDAO dao) {
+        this.dao = dao;
+    }
+
+    IUserDAO dao;
+
     public boolean addUser(String name, String surname, String email, String password) throws SQLException {
-        if (MySqlUserDAO.getInstance().checkExistenceByEmail(email)) {
+        if (this.dao.checkExistenceByEmail(email)) {
             appendErrorMessage(Message.getInstance().getMessage(Message.EMAIL_ALREADY_EXISTS));
             setSuccessFlag(false);
             return false;
@@ -32,7 +39,7 @@ public class UserService extends JsonResponseBuilder {
         user.setPassword(password);
         user.setRoleId(User.CLIENT_ROLE_ID);
 
-        if (MySqlUserDAO.getInstance().insertUser(user)) {
+        if (this.dao.insertUser(user)) {
             appendSuccessMessage(Message.getInstance().getMessage(Message.REGISTRATION_SUCCESS));
             return true;
         } else {
@@ -48,7 +55,7 @@ public class UserService extends JsonResponseBuilder {
             setSuccessFlag(false);
             return null;
         } else {
-            User user = MySqlUserDAO.getInstance().findByEmail(email);
+            User user = this.dao.findByEmail(email);
             if (user == null) {
                 appendErrorMessage(Message.getInstance().getMessage(Message.NO_USER_WITH_SUCH_EMAIL));
                 setSuccessFlag(false);
@@ -127,7 +134,7 @@ public class UserService extends JsonResponseBuilder {
 
     public boolean changeUserRole(Integer userId, Integer roleId) throws SQLException {
         if (roleId > 1) {
-            if (MySqlUserDAO.getInstance().updateRole(roleId, userId)) {
+            if (this.dao.updateRole(roleId, userId)) {
                 return true;
 
             } else {
@@ -147,7 +154,7 @@ public class UserService extends JsonResponseBuilder {
         currentUser.setSurname(surname);
         currentUser.setEmail(email);
         currentUser.setPassword(password);
-        if (MySqlUserDAO.getInstance().updateBasic(currentUser)) {
+        if (this.dao.updateBasic(currentUser)) {
             appendSuccessMessage(Message.getInstance().getMessage(Message.SUCCESSFULL_OPERATION));
             return true;
         } else {

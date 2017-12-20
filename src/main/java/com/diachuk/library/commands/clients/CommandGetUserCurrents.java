@@ -3,6 +3,7 @@ package com.diachuk.library.commands.clients;
 import com.diachuk.library.commands.ICommand;
 import com.diachuk.library.controller.LibraryServlet;
 import com.diachuk.library.dao.entities.*;
+import com.diachuk.library.dao.implementations.MySql.MySqlUserDAO;
 import com.diachuk.library.services.SessionManagerService;
 import com.diachuk.library.services.UserService;
 import com.google.gson.Gson;
@@ -27,7 +28,7 @@ public class CommandGetUserCurrents implements ICommand {
         SessionManagerService sessionService = new SessionManagerService(request);
         User currentUser = sessionService.getCurrentUser();
 
-        UserService userService = new UserService();
+        UserService userService = new UserService(MySqlUserDAO.getInstance());
         List<IReservation> reservations = userService.getUserCurrentReservations(currentUser);
         List<Request> requests = userService.getUserCurrentRequests(currentUser);
         List<BookLoan> bookLoans = userService.getUserCurrentBookLoans(currentUser);

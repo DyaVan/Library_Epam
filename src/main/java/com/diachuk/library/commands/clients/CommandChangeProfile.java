@@ -3,6 +3,7 @@ package com.diachuk.library.commands.clients;
 import com.diachuk.library.commands.ICommand;
 import com.diachuk.library.controller.LibraryServlet;
 import com.diachuk.library.dao.entities.User;
+import com.diachuk.library.dao.implementations.MySql.MySqlUserDAO;
 import com.diachuk.library.manage.Message;
 import com.diachuk.library.services.SessionManagerService;
 import com.diachuk.library.services.UserService;
@@ -29,7 +30,7 @@ public class CommandChangeProfile implements ICommand {
         SessionManagerService sessionManagerService = new SessionManagerService(request);
         User currentUser = sessionManagerService.getCurrentUser();
 
-        UserService userService = new UserService();
+        UserService userService = new UserService(MySqlUserDAO.getInstance());
         userService.updateUser(currentUser, name, surname, email, password);
 
         String jsonResponse = userService.buildJsonResponse().extractJsonString();

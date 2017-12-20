@@ -3,6 +3,7 @@ package com.diachuk.library.commands.free;
 import com.diachuk.library.commands.ICommand;
 import com.diachuk.library.controller.LibraryServlet;
 import com.diachuk.library.dao.entities.User;
+import com.diachuk.library.dao.implementations.MySql.MySqlUserDAO;
 import com.diachuk.library.manage.Message;
 import com.diachuk.library.manage.NavigationManager;
 import com.diachuk.library.services.*;
@@ -26,7 +27,7 @@ public class CommandRegistration implements ICommand {
         String emailParameter = request.getParameter("email");
         String passwordParameter = request.getParameter("password");
 
-        UserService userService = new UserService();
+        UserService userService = new UserService(MySqlUserDAO.getInstance());
 
         if (userService.addUser(nameParameter, surnameParameter, emailParameter, passwordParameter)) {
             startNewSession(request, userService, emailParameter);

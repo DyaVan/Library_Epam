@@ -21,6 +21,11 @@
           <element id="library" level="project" name="Maven: commons-collections:commons-collections:3.2.2" />
           <element id="library" level="project" name="Maven: com.sun.mail:javax.mail:1.5.5" />
           <element id="library" level="project" name="Maven: javax.activation:activation:1.1" />
+          <element id="library" level="project" name="Maven: org.opentest4j:opentest4j:1.0.0" />
+          <element id="library" level="project" name="Maven: org.junit:junit5-engine:5.0.0-ALPHA" />
+          <element id="library" level="project" name="Maven: org.junit:junit5-api:5.0.0-ALPHA" />
+          <element id="library" level="project" name="Maven: org.junit:junit-commons:5.0.0-ALPHA" />
+          <element id="library" level="project" name="Maven: org.junit:junit-engine-api:5.0.0-ALPHA" />
         </element>
       </element>
       <element id="directory" name="META-INF">

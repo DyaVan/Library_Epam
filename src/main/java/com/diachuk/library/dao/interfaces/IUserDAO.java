@@ -9,4 +9,14 @@ import java.sql.SQLException;
  */
 public interface IUserDAO {
 
+    boolean checkExistenceByEmail(String email);
+
+    boolean insertUser(User user);
+
+    User findByEmail(String email);
+
+    boolean updateRole(Integer roleId, Integer userId);
+
+    boolean updateBasic(User currentUser);
+
 }

@@ -3,6 +3,7 @@ package com.diachuk.library.commands.free;
 import com.diachuk.library.commands.ICommand;
 import com.diachuk.library.controller.LibraryServlet;
 import com.diachuk.library.dao.entities.User;
+import com.diachuk.library.dao.implementations.MySql.MySqlUserDAO;
 import com.diachuk.library.manage.NavigationManager;
 import com.diachuk.library.services.InputValidationService;
 import com.diachuk.library.services.SessionManagerService;
@@ -24,7 +25,7 @@ public class CommandLogIn implements ICommand {
         String emailParameter = request.getParameter("email");
         String passwordParameter = request.getParameter("password");
 
-        UserService userService = new UserService();
+        UserService userService = new UserService(MySqlUserDAO.getInstance());
         User currentUser = userService.logIn(emailParameter, passwordParameter);
 
         if (currentUser != null) {

@@ -4,6 +4,7 @@ import com.diachuk.library.commands.ICommand;
 import com.diachuk.library.controller.LibraryServlet;
 import com.diachuk.library.dao.entities.BookLoan;
 import com.diachuk.library.dao.entities.User;
+import com.diachuk.library.dao.implementations.MySql.MySqlUserDAO;
 import com.diachuk.library.manage.Message;
 import com.diachuk.library.manage.NavigationManager;
 import com.diachuk.library.services.SessionManagerService;
@@ -31,7 +32,7 @@ public class CommandGetUserHistory implements ICommand {
         SessionManagerService sessionService = new SessionManagerService(request);
         User currentUser = sessionService.getCurrentUser();
 
-        UserService userService = new UserService();
+        UserService userService = new UserService(MySqlUserDAO.getInstance());
         userService.getUserHistory(currentUser);
 
         String jsonResponse = userService.buildJsonResponse().extractJsonString();

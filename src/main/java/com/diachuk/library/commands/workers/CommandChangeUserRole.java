@@ -2,6 +2,7 @@ package com.diachuk.library.commands.workers;
 
 import com.diachuk.library.commands.ICommand;
 import com.diachuk.library.controller.LibraryServlet;
+import com.diachuk.library.dao.implementations.MySql.MySqlUserDAO;
 import com.diachuk.library.manage.Message;
 import com.diachuk.library.services.InputValidationService;
 import com.diachuk.library.services.UserService;
@@ -23,7 +24,7 @@ public class CommandChangeUserRole implements ICommand {
         Integer roleId = Integer.parseInt(request.getParameter("roleId"));
         Integer userId = Integer.parseInt(request.getParameter("userId"));
 
-        UserService userService = new UserService();
+        UserService userService = new UserService(MySqlUserDAO.getInstance());
         userService.changeUserRole(userId, roleId);
 
         String jsonResponse = userService.buildJsonResponse().extractJsonString();

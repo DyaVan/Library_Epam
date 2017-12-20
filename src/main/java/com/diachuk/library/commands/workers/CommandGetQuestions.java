@@ -5,6 +5,7 @@ import com.diachuk.library.controller.LibraryServlet;
 import com.diachuk.library.dao.entities.BookLoan;
 import com.diachuk.library.dao.entities.Question;
 import com.diachuk.library.dao.entities.User;
+import com.diachuk.library.dao.implementations.MySql.MySqlUserDAO;
 import com.diachuk.library.services.SessionManagerService;
 import com.diachuk.library.services.UserService;
 import com.google.gson.Gson;
@@ -31,7 +32,7 @@ public class CommandGetQuestions implements ICommand {
             onlyNotAnswered = false;
         }
 
-        UserService userService = new UserService();
+        UserService userService = new UserService(MySqlUserDAO.getInstance());
         ArrayList<Question> userQuestions = userService.getAllQuestions(onlyNotAnswered);
 
         String jsonResponse = userService.buildJsonResponse().extractJsonString();
